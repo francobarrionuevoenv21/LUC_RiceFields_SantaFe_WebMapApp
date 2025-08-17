@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TITULO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <script src="js/leaflet.js"></script>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        html, body, #map {
+            height: 100vh; /* Full viewport height */
+            width: 100vw;  /* Full viewport width */
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Optional: Prevents scrolling */
+        }
+        
+        /* Style for the info object*/
+        .info {
+            background-color: #697f3dd6;
+            padding: 10px;
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+            font-family: Arial, sans-serif;
+        }
+
+        #dynamic-title {
+            font-size: 17px;
+            color: #e4b242; /* Customize title color */
+            margin-bottom: 5px;
+        }
+
+        #current_feature {
+            font-size: 14px;
+            color: black;
+        }
+
+        /* Style for the entire legend container */
+        .legend {
+            background-color: #697f3dd8; /* Light transparent background */
+            padding: 10px;
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .legend-title {
+            font-weight: bold;
+            color: #e4b242;
+            margin-bottom: 8px;
+        }
+
+        .legend-item {
+            color: "black";
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .legend-box {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            vertical-align: middle;
+            border: 1px solid #999;
+        }
+
+        /*CHECK THIS!!!*/
+        .info h4 {
+            margin: 0 0 5px;
+        }
+
+        /* Style for layers controller panel */
+        #panel {
+            background-color: #697f3dd6;
+            padding: 10px;
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+            font-family: Arial, sans-serif;
+        }
+
+        .panel-title {
+            font-size: 17px;
+            margin: 0 0 0px;
+            color:  #e4b242;
+        }
+
+        .custom-control {
+        padding: 0; /* Add space between the controls */
+        }
+        
+        .leaflet-control-layers {
+            width: 100%;
+            /*min-width: 250px !important; /* Set a minimum width */
+            max-width: 350px; /* Optional: set a max width */
+            min-height: 50px !important; /* Set a minimum height */
+            max-height: 400px; /* Optional: set a max height */
+            padding: 0px; /* Add padding */
+            background: transparent !important;
+            border: none !important; /* Make the border line transparent */
+            color: "black"; /* Change text color */
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) and (orientation: portrait) {
+            .legend {
+                max-width: 40%;
+                font-size: 14px;
+                bottom: 40px;
+            }
+            .panel{
+                max-width: 60%;
+                font-size: 14px;
+            }
+            .leaflet-control-layers {
+                width: 90%; /* Fill the panel */
+                max-width: none;
+                font-size: 14px;
+            }
+            .info {
+                max-width: 40%;
+                font-size: 14px;
+                top: 10px;
+            }
+
+            .leaflet-control-zoom {
+                bottom: 60px; /* Raise it above OS navigation bar */
+            }
+        }
+
+        @media (max-width: 800px) and (orientation: landscape) {
+            .legend {
+                max-width: 40%;
+                font-size: 14px;
+                bottom: 40px;
+            }
+            .panel{
+                max-width: 60%;
+                font-size: 14px;
+            }
+            .leaflet-control-layers {
+                width: 90%; /* Fill the panel */
+                max-width: none;
+                font-size: 14px;
+            }
+            .info {
+                max-width: 40%;
+                font-size: 14px;
+                top: 10px;
+            }
+
+            .leaflet-control-zoom {
+                bottom: 60px; /* Raise it above OS navigation bar */
+            }
+        }
+
+
+
+
+
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    </div>
+    <script>
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // Initial settings
+        let map = L.map("map").setView([-30.898564110590716, -60.15622193533809], 8);
+        map.zoomControl.setPosition('bottomleft');
+
+        L.tileLayer("https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attribution/">CartoDB</a>',
+            subdomains: "abcd",
+            maxZoom: 35
+        }).addTo(map);
+
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // Variables intialization
+
+        let geojsonLayer01;
+        let geojsonLayer02;
+        let geojsonLayer03;
+        let vegasGroup = L.layerGroup()// Vegas boundaries & degradación index
+        let pqueCPGroup = L.layerGroup()// Parque Cuenca del Plata boundaries
+        let CuencaRBGroup = L.layerGroup()// Cuenca del Rio Blanco boundaries
+
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // Initializing and adding layers to the map
+
+        // Loading Parque Provincial Cordón del Plata boundaries layer
+        fetch("data/pque_cuencaplata_4326.geojson")
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                    geojsonLayer02 = L.geoJSON(data, {
+                        style: {
+                            weight : 0.75,
+                            color : "black",
+                            fillColor : "#0eb353",
+                            fillOpacity : 0.3},
+                    });
+                    pqueCPGroup.addLayer(geojsonLayer02);
+            });
+
+        // Loading Cuenca del Río Blanco boundaries layer    
+        fetch("data/cuenca_RBlanco_4326.geojson")
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+                geojsonLayer03 = L.geoJSON(data, {
+                    style: {
+                        weight : 0.75,
+                        color : "black",
+                        fillColor : "#f2efe9",
+                        fillOpacity : 0.9},
+                });
+                CuencaRBGroup.addLayer(geojsonLayer03);
+        });
+
+        // Loading veagas boundaries + info degradación layer
+        fetch("data/vegas_4326v2.geojson")
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                    geojsonLayer01 = L.geoJSON(data, {
+                        style: stat_style,
+                        onEachFeature: function(feature, layer) {
+                            layer.on("mouseover", highlight_feature_vegas);
+                            layer.on("mouseout", function(e) {
+                                reset_highlight(e, geojsonLayer01);
+                            });
+                        }
+                    });
+                    vegasGroup.addLayer(geojsonLayer01);
+                });
+
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // Create Leaflet control object for legend
+        let legend = L.control({position: "bottomright"});
+
+        // Function that runs when legend is added to map
+        legend.onAdd = function() {
+            let div = L.DomUtil.create("div", "legend");        
+            div.innerHTML = 
+                '<div class="legend-title">Índice de degradación</div>' +
+                '<div class="legend-item"><div class="legend-box" style="background-color: #ff0000"></div>0.81-1.00</div>' +
+                '<div class="legend-item"><div class="legend-box" style="background-color: #ff5a00"></div>0.61–0.80</div>' +
+                '<div class="legend-item"><div class="legend-box" style="background-color: #ff9a00"></div>0.41–0.60</div>' +
+                '<div class="legend-item"><div class="legend-box" style="background-color: #ffce00"></div>0.21–0.40</div>' +
+                '<div class="legend-item"><div class="legend-box" style="background-color: #f0ff00"></div>0.00–0.20</div>';
+            return div;
+        };
+
+        // Add Legend to Map
+        legend.addTo(map);
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // Info panel settings --> Descripción de la vega
+        let info = L.control({position: "topright"}); // Referencias control
+
+        function infoDiv(divWidth) {
+            if (info._map) {
+                info.remove(); // Remove existing control if already added
+            }
+
+            info.onAdd = function() {
+                let div = L.DomUtil.create("div", "info");
+                div.innerHTML = `
+                    <h4 id="dynamic-title">Información</h4>
+                    <p id="current_feature"></p>`;
+                div.style.width = divWidth; // Only keep width if it's dynamic
+                return div;
+            };
+
+            info.addTo(map); // Add the control to the map
+        }
+        
+        // Initialize infoDiv
+        infoDiv('15em') 
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // Features styles and events
+
+        let highlightStyle = {
+            weight: 5,
+            color: "yellow",
+            fillOpacity: 0.5
+        };
+
+        function stat_color(d) {
+            if(d > 0.8) return "#ff0000";
+            if(d > 0.6) return "#ff5a00";
+            if(d > 0.4) return "#ff9a00";
+            if(d > 0.2) return "#ffce00"; 
+            return "#f0ff00";
+        }
+
+        function stat_style(feature) {
+            return {
+                fillColor: stat_color(feature.properties.degradacio),
+                weight: 1,
+                opacity: 1,
+                color: "black",
+                fillOpacity: 1
+            };
+        }
+
+        function highlight_feature_vegas(e) {
+            infoDiv('30em')
+            info_p = document.getElementById("current_feature");
+            info_h4 = document.getElementById("dynamic-title");
+            e.target.setStyle(highlightStyle);
+            e.target.bringToFront();
+            info_h4.innerText = "Descripción de la vega";
+            info_p.innerHTML =
+                "<b>Denominación vega:</b> " + e.target.feature.properties.Name + "<br>" +
+                "<b>Índice de degradación:</b> " + e.target.feature.properties.degradacio + "<br>" +
+                "<b>Invasión rosa mosqueta [%]:</b> " + e.target.feature.properties.percen_Rosa + "<br>" +
+                "<b>Área quemada [%]:</b> " + e.target.feature.properties.percen_Incendio + "<br>" +
+                "<b>Ocurrencia incendios:</b> " + e.target.feature.properties.quemada + "<br>" +
+                "<b>Área [m<sup>2</sup>]:</b> " + e.target.feature.properties.area_int + "<br>" +
+                "<b>Altura [m]:</b> " + e.target.feature.properties.demcuenta_int + "<br>" +
+                "<b>Observaciones (Rubio M.C. y Betancourt P., 2018):</b> " + e.target.feature.properties.observacio + "<br>"
+        }
+
+        function reset_highlight(e, gjsLay) {
+            infoDiv('15em')
+            e.target.bringToFront();
+            gjsLay.resetStyle(e.target);
+            info_p.innerHTML = "";
+            info_h4.innerText = "Referencias";
+        }
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------------------------    
+        // Layers controller
+
+        // Function to bring the group to the front
+        function bringGroupToFront(group) {
+            group.eachLayer(function(layer) {
+                if (layer.bringToFront) {
+                    layer.bringToFront();
+                }
+            });
+        }
+        
+        // Add the layers to the map in the following order
+        vegasGroup.addTo(map);
+        CuencaRBGroup.addTo(map);
+        bringGroupToFront(vegasGroup); // Just to ensure vegasGroup is on top
+
+
+        // Overlay layers
+        let overlayBound = {
+            "<b>Vegas</b>": vegasGroup,
+            "<b>Cuenca del Río Blanco</b>": CuencaRBGroup,
+            "<b>Parque Provincial Cordón del Plata</b>": pqueCPGroup
+        };
+
+        // Add event listeners to bring the group to the front when layers are added or removed
+        map.on('overlayadd', function () {
+            bringGroupToFront(vegasGroup);
+        });
+        map.on('overlayremove', function () {
+            bringGroupToFront(vegasGroup);
+        });
+        
+        // Panel for controller
+        let panel = L.control({ position: "topleft" });
+        panel.onAdd = function(map) {
+            let div = L.DomUtil.create("div", "info");
+            div.id = "panel";
+            return div;
+        };
+        panel.addTo(map);
+
+        // Layers controller
+        let customControl = L.control.layers(null, overlayBound, { collapsed: false });
+
+        // Panel settings
+        let panelDiv = document.getElementById("panel");
+        if (panelDiv) {
+            let title = document.createElement("h4");
+            title.innerText = "Capas";
+            title.classList.add("panel-title"); // Use a CSS class instead
+            panelDiv.appendChild(title);
+
+            customControl.addTo(map);
+            panelDiv.appendChild(customControl.getContainer());
+        }
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        
+        vegasGroup.addTo(map); // Add the vegasGroup layer to the map by default
+    </script>
+</body>
+</html>
