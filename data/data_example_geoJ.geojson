@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "data_example_geoJ",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "id": 1, "campaign": "c1", "WQI": 5, "pWQI1": 5, "index_02": 3, "idx02_p1": 4 }, "geometry": { "type": "Point", "coordinates": [ -59.979606746740501, -30.699207268706189 ] } },
+{ "type": "Feature", "properties": { "id": 1, "campaign": "c1", "WQI": 5, "pWQI1": 5, "index_02": 3, "idx02_p1": 4 }, "geometry": { "type": "Point", "coordinates": [ -60.979606746740501, -30.699207268706189 ] } }
+]
+}

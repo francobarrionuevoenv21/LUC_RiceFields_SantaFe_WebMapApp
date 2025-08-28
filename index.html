@@ -183,6 +183,47 @@
             maxZoom: 35
         }).addTo(map);
 
+        let myIcon = L.icon({
+            iconUrl: 'images/droplet_markers/water_dropler_green.png',
+            iconSize:     [28, 28], // width and height of the image in pixels
+            iconAnchor:   [12, 12], // point of the icon which will correspond to marker's location
+        })
+
+        let myBigIcon = L.icon({
+            iconUrl: 'images/droplet_markers/water_dropler_green.png',
+            iconSize:     [60, 60], // width and height of the image in pixels
+            iconAnchor:   [35, 35], // point of the icon which will correspond to marker's location
+        })
+
+        fetch("data/data_example_geoJ.geojson")
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                originalLayer = data; // original GeoJSON data
+                geojsonLayer = L.geoJSON(originalLayer, {
+                    pointToLayer: function(feature, latlng) {
+                        return L.marker(latlng, { icon: myIcon });
+                    },
+                    onEachFeature: function(feature, layer) {
+                            layer.on("mouseover", function(e){ 
+                                //info_feature_Antenas(e),
+                                layer.setIcon(myBigIcon);
+                            })
+                            layer.on("mouseout", function(e) {
+                                //reset_info_Antenas(e, geojsonLayer),
+                                layer.setIcon(myIcon);
+                            });
+                        }
+                }).addTo(map);
+            });
+
+        document.getElementById('filterDateBtn').addEventListener('click', function() {
+            let dateInput = document.getElementById('dateInput').value;
+            filterByFeature('campaign', dateInput);
+        });
+
+        /*
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
         // Variables intialization
@@ -400,7 +441,7 @@
 
             customControl.addTo(map);
             panelDiv.appendChild(customControl.getContainer());
-        }
+        } */
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
         
