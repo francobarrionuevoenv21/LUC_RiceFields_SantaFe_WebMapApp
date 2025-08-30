@@ -216,19 +216,19 @@
                 // Initialize the layer with all features
                 geojsonLayer = L.geoJSON(geojsonData, {
                     pointToLayer: function(feature, latlng) {
-                        return L.marker(latlng, { icon: myIcon });
-                    },
-                    onEachFeature: function(feature, layer) {
-                        layer.on("mouseover", function(e){ 
-                            info_feature_SamPoints(e);
-                            layer.setIcon(myBigIcon);
-                        });
-                        layer.on("mouseout", function(e) {
-                            reset_info_SamPoints(e, geojsonLayer);
-                            layer.setIcon(myIcon);
-                        });
-                    }
-                }).addTo(map);
+                        return L.marker(latlng, { icon: iconByWQI(feature.properties.WQI) });
+                },
+                onEachFeature: function(feature, layer) {
+                    layer.on("mouseover", function(e){ 
+                        info_feature_SamPoints(e);
+                        layer.setIcon(BigIconByWQI(feature.properties.WQI));
+                    });
+                    layer.on("mouseout", function(e) {
+                        reset_info_SamPoints(e, geojsonLayer);
+                        layer.setIcon(iconByWQI(feature.properties.WQI) );
+                    });
+                }
+            }).addTo(map);
 
                 // Store original data for filtering
                 originalLayer = geojsonData;
@@ -261,17 +261,62 @@
             });
 
         // Icons remain the same
-        let myIcon = L.icon({
-            iconUrl: 'images/droplet_markers/water_dropler_green.png',
-            iconSize: [28, 28],
-            iconAnchor: [12, 12],
-        });
+        function dropByWQI(d) {
+            if (d > 90){
+                return 'images/droplet_markers/water_drop_gren.png'; // Excellent
+            } else if (d > 45){
+                return 'images/droplet_markers/water_drop_yellow.png'; // Good
+            }  else {
+                return 'images/droplet_markers/water_drop_red.png'; // Very Poor
+            }
 
-        let myBigIcon = L.icon({
-            iconUrl: 'images/droplet_markers/water_dropler_green.png',
-            iconSize: [60, 60],
-            iconAnchor: [35, 35],
-        });
+        }
+
+        function iconByWQI(d) {
+            if (d > 80){
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_gren.png',
+                    iconSize: [28, 28],
+                    iconAnchor: [12, 12],
+                }); // Excellent
+            } else if (d > 45){
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_yellow.png',
+                    iconSize: [28, 28],
+                    iconAnchor: [12, 12],
+                }); // Good
+            }  else {
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_red.png',
+                    iconSize: [28, 28],
+                    iconAnchor: [12, 12],
+                }); // Very Poor
+            }
+
+        }
+
+        function BigIconByWQI(d) {
+            if (d > 80){
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_gren.png',
+                    iconSize: [60, 60],
+                    iconAnchor: [35, 35],
+                }); // Excellent
+            } else if (d > 45){
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_yellow.png',
+                    iconSize: [60, 60],
+                    iconAnchor: [35, 35],
+                }); // Good
+            }  else {
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_red.png',
+                    iconSize: [60, 60],
+                    iconAnchor: [35, 35],
+                }); // Very Poor
+            }
+
+        }
 
         function filterByFeature(feature, value) {
             if (!originalLayer) return;
@@ -290,16 +335,16 @@
 
             geojsonLayer = L.geoJSON(filteredData, {
                 pointToLayer: function(feature, latlng) {
-                    return L.marker(latlng, { icon: myIcon });
+                    return L.marker(latlng, { icon: iconByWQI(feature.properties.WQI) });
                 },
                 onEachFeature: function(feature, layer) {
                     layer.on("mouseover", function(e){ 
                         info_feature_SamPoints(e);
-                        layer.setIcon(myBigIcon);
+                        layer.setIcon(BigIconByWQI(feature.properties.WQI));
                     });
                     layer.on("mouseout", function(e) {
                         reset_info_SamPoints(e, geojsonLayer);
-                        layer.setIcon(myIcon);
+                        layer.setIcon(iconByWQI(feature.properties.WQI) );
                     });
                 }
             }).addTo(map);
