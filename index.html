@@ -334,7 +334,7 @@
                 onEachFeature: function(feature, layer) {
                     layer.on("mouseover", function(e){ 
                         info_feature_SamPoints(e);
-                        show_IBRI();
+                        show_IBRI(e);
                         layer.setIcon(BigIconByWQI(feature.properties.WQI));
                     });
                     layer.on("mouseout", function(e) {
@@ -354,7 +354,7 @@
             let div = L.DomUtil.create("div", "info"); // change info by ibri_panel or similar
             div.innerHTML = 
                 //<h4 id="dynamic-title">Item description</h4>
-                `<p id="current_feature"></p>`;
+                `<p id="current_feature_ibri"></p>`;
             div.style.width = '35em'; // Only keep width if it's dynamic
             div.id = "ibri_panel";
             return div;
@@ -421,8 +421,14 @@
             info_h4.innerText = "Referencias";
         }
 
-        function show_IBRI(){
+        function show_IBRI(e){
             IBRI_panel.addTo(map);
+
+            //info_h4 = document.getElementById("dynamic-title");
+            //info_h4.innerText = "Sampling point & WQI info"
+            info_p = document.getElementById("current_feature_ibri");
+            info_p.innerHTML =
+            "IBRI: " + e.target.feature.properties.IBRI
         }
 
         function remove_IBRI(){
