@@ -218,16 +218,6 @@
                     pointToLayer: function(feature, latlng) {
                         return L.marker(latlng, { icon: iconByWQI(feature.properties.WQI) });
                 },
-                onEachFeature: function(feature, layer) {
-                    layer.on("mouseover", function(e){ 
-                        info_feature_SamPoints(e);
-                        layer.setIcon(BigIconByWQI(feature.properties.WQI));
-                    });
-                    layer.on("mouseout", function(e) {
-                        reset_info_SamPoints(e, geojsonLayer);
-                        layer.setIcon(iconByWQI(feature.properties.WQI) );
-                    });
-                }
             }).addTo(map);
 
                 // Store original data for filtering
@@ -344,20 +334,35 @@
                 onEachFeature: function(feature, layer) {
                     layer.on("mouseover", function(e){ 
                         info_feature_SamPoints(e);
+                        show_IBRI();
                         layer.setIcon(BigIconByWQI(feature.properties.WQI));
                     });
                     layer.on("mouseout", function(e) {
                         reset_info_SamPoints(e, geojsonLayer);
+                        remove_IBRI();
                         layer.setIcon(iconByWQI(feature.properties.WQI) );
                     });
                 }
             }).addTo(map);
         }
 
-                // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        let IBRI_panel = L.control({position: "topright"})
+        IBRI_panel.onAdd = function(map) {
+            let div = L.DomUtil.create("div", "info"); // change info by ibri_panel or similar
+            div.innerHTML = 
+                //<h4 id="dynamic-title">Item description</h4>
+                `<p id="current_feature"></p>`;
+            div.style.width = '35em'; // Only keep width if it's dynamic
+            div.id = "ibri_panel";
+            return div;
+        };
+
         // Info panel settings --> Descripción de la vega
         let info = L.control({position: "topright"}); // Referencias control
+        //let IBRI_panel = L.control({position: "topright"}); // IBRI logo control
 
         function infoDiv(divWidth) {
             if (info._map) {
@@ -374,12 +379,12 @@
             };
 
             info.addTo(map); // Add the control to the map
+            //IBRI_panel.addTo(map);
         }
         
         // Initialize infoDiv
         infoDiv('15em') 
 
-        // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
         // Features styles and events
 
@@ -410,12 +415,18 @@
             "Observations: " + e.target.feature.properties.Observation + "<br>";
         }
 
-        
-
         function reset_info_SamPoints(e, gjLayer) {
             infoDiv('15em')
             info_p.innerHTML = "";
             info_h4.innerText = "Referencias";
+        }
+
+        function show_IBRI(){
+            IBRI_panel.addTo(map);
+        }
+
+        function remove_IBRI(){
+            IBRI_panel.remove();
         }
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------    
