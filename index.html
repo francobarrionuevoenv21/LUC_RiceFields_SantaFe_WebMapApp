@@ -421,7 +421,7 @@
             info_h4.innerText = "Referencias";
         }
 
-        function show_IBRI(e){
+        /*function show_IBRI(e){
             IBRI_panel.addTo(map);
 
             //info_h4 = document.getElementById("dynamic-title");
@@ -429,6 +429,25 @@
             info_p = document.getElementById("current_feature_ibri");
             info_p.innerHTML =
             "IBRI: " + e.target.feature.properties.IBRI
+        }*/
+
+        // Test herbicides
+        function show_IBRI(e){
+            IBRI_panel.addTo(map);
+
+            //info_h4 = document.getElementById("dynamic-title");
+            //info_h4.innerText = "Sampling point & WQI info"
+            info_p = document.getElementById("current_feature_ibri");
+            info_p.innerHTML = "";
+
+            if (e.target.feature.properties.Cyhalofop !== "NA"){
+                info_p.innerHTML += "Cyhalofop:" + e.target.feature.properties.Cyhalofop + " µg/L" + "<br>";
+            } 
+            
+            if (e.target.feature.properties.Metolachlor !== "NA"){
+                info_p.textContent += "Metolachlor: " + e.target.feature.properties.Metolachlor + " µg/L\n"; // visible line break to avoid interpreting "<LC" as the start of an HTML tag
+            }
+            //"IBRI: " + e.target.feature.properties.IBRI
         }
 
         function remove_IBRI(){
