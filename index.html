@@ -321,11 +321,15 @@
         function filterByFeature(feature, value) {
             if (!originalLayer) return;
 
-            let filteredData = originalLayer.features.filter(function(featureItem) {
+            let filteredData01 = originalLayer.features.filter(function(featureItem) {
                 return featureItem.properties[feature] === value;
             });
 
-            updateLayer(filteredData);
+            let filteredData02 = filteredData01.filter(function(featureItem) {
+                return featureItem.properties["Observation"] !== "Not sampled"; //"Observation": "Not sampled"
+            });
+
+            updateLayer(filteredData02);
         }
 
         function updateLayer(filteredData) {
@@ -363,7 +367,7 @@
             info.onAdd = function() {
                 let div = L.DomUtil.create("div", "info");
                 div.innerHTML = `
-                    <h4 id="dynamic-title">Información</h4>
+                    <h4 id="dynamic-title">Item description</h4>
                     <p id="current_feature"></p>`;
                 div.style.width = divWidth; // Only keep width if it's dynamic
                 return div;
@@ -383,12 +387,30 @@
             infoDiv('35em')
             info_p = document.getElementById("current_feature");
             info_h4 = document.getElementById("dynamic-title");
-            info_h4.innerText = "-"
+            info_h4.innerText = "Sampling point & WQI info"
             info_p.innerHTML =
-            "Sampling points: " + e.target.feature.properties.Description + "<br>"+
+            "Point description: " + e.target.feature.properties.Description + "<br>"+
             "WQI: " + e.target.feature.properties.WQI + "<br>" +
-            "Cmpg: " + e.target.feature.properties.Sampling_date + "<br>";
+            "pH: " + e.target.feature.properties.ph_WQI + "<br>" +
+            "Conductivity: " + e.target.feature.properties.EC_WQI + " uS/cm" + "<br>" +
+            "Oxygen Demand (DO)???: " + e.target.feature.properties.DO_WQI + " mg/L" + "<br>" +
+            "Total Suspended Solids (TSS): " + e.target.feature.properties.TSS_WQI + " mg/L" + "<br>" +
+            "Biochemichal Oxygen Demand (DBO5): " + e.target.feature.properties.BOD5_WQI + " mg/L" + "<br>" +
+            "Nitrate: " + e.target.feature.properties.Nitrate_WQI + " mg/L" + "<br>" +
+            "Nitrite: " + e.target.feature.properties.Nitrite_WQI + " mg/L" + "<br>" +
+            "Ammonium: " + e.target.feature.properties.Ammonium_WQI + " mg/L" + "<br>" +
+            "Phosphate: " + e.target.feature.properties.Phosphate_WQI + " mg/L" + "<br>" +
+            "Cr: " + e.target.feature.properties.Cr_WQI + " mg/L" + "<br>" +
+            "Cu: " + e.target.feature.properties.Cu_WQI + " mg/L" + "<br>" +
+            "As: " + e.target.feature.properties.As_WQI + " mg/L" + "<br>" +
+            "Zn: " + e.target.feature.properties.Zn_WQI + " mg/L" + "<br>" +
+            "Mn: " + e.target.feature.properties.Mn_WQI + " mg/L" + "<br>" +
+            "Ni: " + e.target.feature.properties.Ni_WQI + " mg/L" + "<br>" +
+            "Pb: " + e.target.feature.properties.Pb_WQI + " mg/L" + "<br>" +
+            "Observations: " + e.target.feature.properties.Observation + "<br>";
         }
+
+        
 
         function reset_info_SamPoints(e, gjLayer) {
             infoDiv('15em')
