@@ -129,10 +129,6 @@
                 font-size: 14px;
                 top: 10px;
             }
-
-            .leaflet-control-zoom {
-                bottom: 60px; /* Raise it above OS navigation bar */
-            }
         }
 
         @media (max-width: 800px) and (orientation: landscape) {
@@ -155,15 +151,7 @@
                 font-size: 14px;
                 top: 10px;
             }
-
-            .leaflet-control-zoom {
-                bottom: 60px; /* Raise it above OS navigation bar */
-            }
         }
-
-
-
-
 
     </style>
 </head>
@@ -174,8 +162,8 @@
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
         // Initial settings
-        let map = L.map("map").setView([-30.898564110590716, -60.15622193533809], 8);
-        map.zoomControl.setPosition('bottomleft');
+        let map = L.map("map", {zoomControl: false}).setView([-30.898564110590716, -60.15622193533809], 8);
+        //map.zoomControl.setPosition('bottomleft');
 
         L.tileLayer("https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attribution/">CartoDB</a>',
@@ -206,7 +194,7 @@
 
         let geojsonLayer = null;
         let originalLayer = null;
-        let campgInput = 'Sowing 22-23'; // default value
+        let campgInput = 'C1-Sowing 22-23'; // default value
 
         fetch("data/data_campaigns_v1.geojson")
             .then(r => r.json())
@@ -351,6 +339,31 @@
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
+                // Info panel settings --> Descripción de la vega
+        let info = L.control({position: "topright"}); // Referencias control
+        //let IBRI_panel = L.control({position: "topright"}); // IBRI logo control
+
+        function infoDiv(divWidth) { // show customized size panel (NOTE: change name!!)
+            if (info._map) {
+                info.remove(); // Remove existing control if already added
+            }
+
+            info.onAdd = function() {
+                let div = L.DomUtil.create("div", "info");
+                div.innerHTML = `
+                    <h4 id="dynamic-title">Item description</h4>
+                    <p id="current_feature"></p>`;
+                div.style.width = divWidth; // Only keep width if it's dynamic
+                return div;
+            };
+
+            info.addTo(map); // Add the control to the map
+            //IBRI_panel.addTo(map);
+        }
+        
+        // Initialize infoDiv
+        // infoDiv('15em') 
+        
         let IBRI_panel = L.control({position: "topright"})
         IBRI_panel.onAdd = function(map) {
             let div = L.DomUtil.create("div", "info"); // change info by ibri_panel or similar
@@ -373,31 +386,6 @@
             return div;
         };
 
-        // Info panel settings --> Descripción de la vega
-        let info = L.control({position: "topright"}); // Referencias control
-        //let IBRI_panel = L.control({position: "topright"}); // IBRI logo control
-
-        function infoDiv(divWidth) {
-            if (info._map) {
-                info.remove(); // Remove existing control if already added
-            }
-
-            info.onAdd = function() {
-                let div = L.DomUtil.create("div", "info");
-                div.innerHTML = `
-                    <h4 id="dynamic-title">Item description</h4>
-                    <p id="current_feature"></p>`;
-                div.style.width = divWidth; // Only keep width if it's dynamic
-                return div;
-            };
-
-            info.addTo(map); // Add the control to the map
-            //IBRI_panel.addTo(map);
-        }
-        
-        // Initialize infoDiv
-        infoDiv('15em') 
-
         // -------------------------------------------------------------------------------------------------------------------------------------
         // Features styles and events
 
@@ -405,9 +393,9 @@
             infoDiv('35em')
             info_p = document.getElementById("current_feature");
             info_h4 = document.getElementById("dynamic-title");
-            info_h4.innerText = "Sampling point & WQI info"
+            info_h4.innerText = e.target.feature.properties.Description//"Sampling point & WQI info"
             info_p.innerHTML =
-            "Point description: " + e.target.feature.properties.Description + "<br>"+
+            //"Point description: " + e.target.feature.properties.Description + "<br>"+
             "WQI: " + e.target.feature.properties.WQI + "<br>" +
             "pH: " + e.target.feature.properties.ph_WQI + "<br>" +
             "Conductivity: " + e.target.feature.properties.EC_WQI + " uS/cm" + "<br>" +
@@ -429,7 +417,8 @@
         }
 
         function reset_info_SamPoints(e, gjLayer) {
-            infoDiv('15em')
+            //infoDiv('15em')
+            info.remove()
             info_p.innerHTML = "";
             info_h4.innerText = "Referencias";
         }
@@ -549,6 +538,10 @@
                 content += "Metsulfuron-methyl: " + escapedValue + " µg/L<br>"; 
             }
 
+            if (content === "") {
+                content = "No herbicides detected.";
+            }
+
             info_p.innerHTML = content;
         }
 
@@ -557,7 +550,11 @@
         }
 
         function remove_Herbcs(){
-            IBRI_panel.remove();
+            Herbcs_panel.remove();
+        }
+
+        function remove_info(){
+            info.remove();
         }
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------    
