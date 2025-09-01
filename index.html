@@ -335,11 +335,13 @@
                     layer.on("mouseover", function(e){ 
                         info_feature_SamPoints(e);
                         show_IBRI(e);
+                        show_Herbcs(e);
                         layer.setIcon(BigIconByWQI(feature.properties.WQI));
                     });
                     layer.on("mouseout", function(e) {
                         reset_info_SamPoints(e, geojsonLayer);
                         remove_IBRI();
+                        remove_Herbcs();
                         layer.setIcon(iconByWQI(feature.properties.WQI) );
                     });
                 }
@@ -357,6 +359,17 @@
                 `<p id="current_feature_ibri"></p>`;
             div.style.width = '35em'; // Only keep width if it's dynamic
             div.id = "ibri_panel";
+            return div;
+        };
+
+        let Herbcs_panel = L.control({position: "topright"})
+        Herbcs_panel.onAdd = function(map) {
+            let div = L.DomUtil.create("div", "info"); // change info by ibri_panel or similar
+            div.innerHTML = 
+                //<h4 id="dynamic-title">Item description</h4>
+                `<p id="current_feature_herbcs"></p>`;
+            div.style.width = '35em'; // Only keep width if it's dynamic
+            div.id = "herbcs_panel";
             return div;
         };
 
@@ -421,7 +434,7 @@
             info_h4.innerText = "Referencias";
         }
 
-        /*function show_IBRI(e){
+        function show_IBRI(e){
             IBRI_panel.addTo(map);
 
             //info_h4 = document.getElementById("dynamic-title");
@@ -429,15 +442,15 @@
             info_p = document.getElementById("current_feature_ibri");
             info_p.innerHTML =
             "IBRI: " + e.target.feature.properties.IBRI
-        }*/
+        }
 
         // Test herbicides
-        function show_IBRI(e){
-            IBRI_panel.addTo(map);
+        function show_Herbcs(e){
+            Herbcs_panel.addTo(map);
 
             //info_h4 = document.getElementById("dynamic-title");
             //info_h4.innerText = "Sampling point & WQI info"
-            info_p = document.getElementById("current_feature_ibri");
+            info_p = document.getElementById("current_feature_herbcs");
             info_p.innerHTML = "";
 
             if (e.target.feature.properties.Cyhalofop !== "NA"){
@@ -451,6 +464,10 @@
         }
 
         function remove_IBRI(){
+            IBRI_panel.remove();
+        }
+
+        function remove_Herbcs(){
             IBRI_panel.remove();
         }
         // -------------------------------------------------------------------------------------------------------------------------------------
