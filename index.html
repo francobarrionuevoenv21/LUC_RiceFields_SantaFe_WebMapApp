@@ -453,13 +453,17 @@
             info_p = document.getElementById("current_feature_herbcs");
             info_p.innerHTML = "";
 
+            // Cyhalofop
             if (e.target.feature.properties.Cyhalofop !== "NA"){
-                info_p.innerHTML += "Cyhalofop:" + e.target.feature.properties.Cyhalofop + " µg/L" + "<br>";
+                info_p.innerHTML += "Cyhalofop:" + e.target.feature.properties.Cyhalofop + " µg/L";
             } 
-            
+            info_p.innerHTML += "<br>";
+            // Metolachlor
             if (e.target.feature.properties.Metolachlor !== "NA"){
                 info_p.textContent += "Metolachlor: " + e.target.feature.properties.Metolachlor + " µg/L\n"; // visible line break to avoid interpreting "<LC" as the start of an HTML tag
             }
+
+
             //"IBRI: " + e.target.feature.properties.IBRI
         }
 
