@@ -447,24 +447,109 @@
         // Test herbicides
         function show_Herbcs(e){
             Herbcs_panel.addTo(map);
-
-            //info_h4 = document.getElementById("dynamic-title");
-            //info_h4.innerText = "Sampling point & WQI info"
+            
             info_p = document.getElementById("current_feature_herbcs");
-            info_p.innerHTML = "";
-
+            info_p.innerHTML = ""; // Clear content
+            
+            let content = "";
+            
             // Cyhalofop
             if (e.target.feature.properties.Cyhalofop !== "NA"){
-                info_p.innerHTML += "Cyhalofop:" + e.target.feature.properties.Cyhalofop + " µg/L";
+                const escapedValue = e.target.feature.properties.Cyhalofop.replace(/</g, '&lt;');
+                content += "Cyhalofop: " + escapedValue + " µg/L<br>"; 
             } 
-            info_p.innerHTML += "<br>";
+            
             // Metolachlor
             if (e.target.feature.properties.Metolachlor !== "NA"){
-                info_p.textContent += "Metolachlor: " + e.target.feature.properties.Metolachlor + " µg/L\n"; // visible line break to avoid interpreting "<LC" as the start of an HTML tag
+                const escapedValue = e.target.feature.properties.Metolachlor.replace(/</g, '&lt;');
+                content += "Metolachlor: " + escapedValue + " µg/L<br>"; 
             }
 
+            // Glyphosate
+            if (e.target.feature.properties.Glyphosate !== "NA"){
+                const escapedValue = e.target.feature.properties.Glyphosate.replace(/</g, '&lt;');
+                content += "Glyphosate: " + escapedValue + " µg/L<br>"; 
+            }
 
-            //"IBRI: " + e.target.feature.properties.IBRI
+            // AMPA
+            if (e.target.feature.properties.AMPA !== "NA"){
+                const escapedValue = e.target.feature.properties.AMPA.replace(/</g, '&lt;');
+                content += "AMPA: " + escapedValue + " µg/L<br>"; 
+            }
+
+            // Acetochlor
+            if (e.target.feature.properties.Acetochlor !== "NA"){
+                const escapedValue = e.target.feature.properties.Acetochlor.replace(/</g, '&lt;');
+                content += "Acetochlor: " + escapedValue + " µg/L<br>"; 
+            }
+
+            // Atrazine
+            if (e.target.feature.properties.Atrazine !== "NA"){
+                const escapedValue = e.target.feature.properties.Atrazine.replace(/</g, '&lt;');
+                content += "Atrazine: " + escapedValue + " µg/L<br>"; 
+            }
+
+            // Azoxystrobin
+            if (e.target.feature.properties.Azoxystrobin !== "NA"){
+                const escapedValue = e.target.feature.properties.Azoxystrobin.replace(/</g, '&lt;');
+                content += "Azoxystrobin: " + escapedValue + " µg/L<br>"; 
+            }
+
+            // Azinfos-methyl
+            if (e.target.feature.properties.Azinfos_methyl !== "NA"){
+                const escapedValue = e.target.feature.properties.Azinfos_methyl.replace(/</g, '&lt;');
+                content += "Azinfos-methyl: " + escapedValue + " µg/L<br>"; 
+            }
+
+            // Cyproconazole
+            if (e.target.feature.properties.Cyproconazole !== "NA"){
+                const escapedValue = e.target.feature.properties.Cyproconazole.replace(/</g, '&lt;');
+                content += "Cyproconazole: " + escapedValue + " µg/L<br>"; 
+            }
+            
+            // Tebuconazole
+            if (e.target.feature.properties.Tebuconazole !== "NA"){
+                const escapedValue = e.target.feature.properties.Tebuconazole.replace(/</g, '&lt;');
+                content += "Tebuconazole: " + escapedValue + " µg/L<br>"; 
+            }
+
+            // Fipronil-sulfona
+            if (e.target.feature.properties.Fipronil_sulfona !== "NA"){
+                const escapedValue = e.target.feature.properties.Fipronil_sulfona.replace(/</g, '&lt;');
+                content += "Fipronil-sulfona: " + escapedValue + " µg/L<br>"; 
+            } 
+
+            // Haloxyfop
+            if (e.target.feature.properties.Haloxyfop !== "NA"){
+                const escapedValue = e.target.feature.properties.Haloxyfop.replace(/</g, '&lt;');
+                content += "Haloxyfop: " + escapedValue + " µg/L<br>"; 
+            } 
+
+            // Haloxyfop-methyl
+            if (e.target.feature.properties.Haloxyfop_methyl !== "NA"){
+                const escapedValue = e.target.feature.properties.Haloxyfop_methyl.replace(/</g, '&lt;');
+                content += "Haloxyfop-methyl: " + escapedValue + " µg/L<br>"; 
+            }
+
+            // Imazapic
+            if (e.target.feature.properties.Imazapic !== "NA"){
+                const escapedValue = e.target.feature.properties.Imazapic.replace(/</g, '&lt;');
+                content += "Imazapic: " + escapedValue + " µg/L<br>"; 
+            }
+
+            // Imazethapyr
+            if (e.target.feature.properties.Imazethapyr !== "NA"){
+                const escapedValue = e.target.feature.properties.Imazethapyr.replace(/</g, '&lt;');
+                content += "Imazethapyr: " + escapedValue + " µg/L<br>"; 
+            }
+
+            // Metsulfuron-methyl
+            if (e.target.feature.properties.Metsulfuron_methyl !== "NA"){
+                const escapedValue = e.target.feature.properties.Metsulfuron_methyl.replace(/</g, '&lt;');
+                content += "Metsulfuron-methyl: " + escapedValue + " µg/L<br>"; 
+            }
+
+            info_p.innerHTML = content;
         }
 
         function remove_IBRI(){
