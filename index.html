@@ -29,15 +29,9 @@
             font-family: Arial, sans-serif;
         }
 
-        .panel-title {
-            font-size: 17px;
-            padding: 200 px;
-            color:  #343535;
-        }
-
-
         /* Style layers controller panel */
         #layers_panel {
+            width: 220px;
             padding: 6px;  /* optional: adjust padding inside the panel */
         }
 
@@ -45,21 +39,43 @@
             margin: 0;        /* remove top and bottom margin */
             padding: 0 0 4px; /* optional: keep a small bottom padding */
             font-size: 17px;  /* adjust size if needed */
-            color:#343535;
+            color:#133131;
         }
 
         #layers_panel .leaflet-control-layers {
             margin-top: 0; /* reduce space above layers selector */
         }
 
-        .dropdown {
-            background-color: #afc3c3;
-            padding: 0;
-            max-width: 150px;
-            border-radius: 6px;
-            /*box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);*/
-            font-family: Arial, sans-serif;
+        /* Style dropdown button */
+
+        #ddbutton_control{
+            /*background-color: #afc3c3;*/
+            width: 220px;
+            padding: 6px;
+            /*border-radius: 6px; */
         }
+
+        #ddbutton_control .dropdown {
+            background-color: #afc3c3;
+            width: 100%;         /* make dropdown fill container */
+            padding: 2px 6px;
+            border: none;
+            outline: none;  
+            
+        }
+
+        #ddbutton_control .panel-title {
+            margin: 0;        /* remove top and bottom margin */
+            padding: 0 0 4px; /* optional: keep a small bottom padding */
+            font-size: 17px;  /* adjust size if needed */
+            color:#133131;
+        }
+
+        #ddbutton_control .dropdown option {
+            font-size: 14px;
+            padding: 4px;
+        }
+
 
         #dynamic-title {
             font-size: 17px;
@@ -189,7 +205,7 @@
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
         // Initial settings
-        let map = L.map("map", {zoomControl: false}).setView([-30.898564110590716, -60.15622193533809], 8);
+        let map = L.map("map", {zoomControl: false}).setView([-30.898564110590716, -60.15622193533809], 9);
         //map.zoomControl.setPosition('bottomleft');
 
         L.tileLayer("https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
@@ -288,8 +304,15 @@
                 // Create dropdown control
                 let DDButtControl = L.control({ position: "topleft" });
                 DDButtControl.onAdd = function (map) {
-                    let div = L.DomUtil.create("div", "info"); //("div", "ddbutton_control"); 
-                    let select = L.DomUtil.create("select", "dropdown", div);
+                    let div = L.DomUtil.create("div", "info"); //("div", "ddbutton_control");
+                    div.id = "ddbutton_control";
+
+                let title = document.createElement("h4");
+                title.innerText = "Select campaign";
+                title.classList.add("panel-title"); // Use a CSS class instead
+                div.appendChild(title);
+
+                    let select = L.DomUtil.create("select", "dropdown", div, placeholder="Select campaign");
 
                     elements.forEach(el => {
                         let option = document.createElement("option");
