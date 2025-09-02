@@ -19,12 +19,45 @@
             overflow: hidden; /* Optional: Prevents scrolling */
         }
         
+        /* CLASS settings */
         /* Style for the info object*/
         .info {
-            background-color: #697f3dd6;
-            padding: 10px;
+            background-color: #afc3c3;
+            padding: 0px;
             border-radius: 6px;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+            /*box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);*/
+            font-family: Arial, sans-serif;
+        }
+
+        .panel-title {
+            font-size: 17px;
+            padding: 200 px;
+            color:  #343535;
+        }
+
+
+        /* Style layers controller panel */
+        #layers_panel {
+            padding: 6px;  /* optional: adjust padding inside the panel */
+        }
+
+        #layers_panel .panel-title {
+            margin: 0;        /* remove top and bottom margin */
+            padding: 0 0 4px; /* optional: keep a small bottom padding */
+            font-size: 17px;  /* adjust size if needed */
+            color:#343535;
+        }
+
+        #layers_panel .leaflet-control-layers {
+            margin-top: 0; /* reduce space above layers selector */
+        }
+
+        .dropdown {
+            background-color: #afc3c3;
+            padding: 0;
+            max-width: 150px;
+            border-radius: 6px;
+            /*box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);*/
             font-family: Arial, sans-serif;
         }
 
@@ -83,12 +116,6 @@
             border-radius: 6px;
             box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
             font-family: Arial, sans-serif;
-        }
-
-        .panel-title {
-            font-size: 17px;
-            margin: 0 0 0px;
-            color:  #e4b242;
         }
 
         .custom-control {
@@ -235,53 +262,52 @@
             }).addTo(map);
         }
 
+        
         let geojsonLayer = null; // Layer for sampling points
         let originalLayer = null;
         let campgInput = 'C1-Sowing 22-23'; // default value
 
-        function campgData_andFbutton(){
-            fetch("data/data_campaigns_v1.geojson")
-                .then(r => r.json())
-                .then(geojsonData => {
-                    const elements = extractUniqueCampaigns(geojsonData);
+        fetch("data/data_campaigns_v1.geojson")
+            .then(r => r.json())
+            .then(geojsonData => {
+                const elements = extractUniqueCampaigns(geojsonData);
 
-                    // Initialize the layer with all features
-                    geojsonLayer = L.geoJSON(geojsonData, {
-                        pointToLayer: function(feature, latlng) {
-                            return L.marker(latlng, { icon: iconByWQI(feature.properties.WQI) });
-                    },
-                }).addTo(map);
+                // Initialize the layer with all features
+                geojsonLayer = L.geoJSON(geojsonData, {
+                    pointToLayer: function(feature, latlng) {
+                        return L.marker(latlng, { icon: iconByWQI(feature.properties.WQI) });
+                },
+            }).addTo(map);
 
-                    // Store original data for filtering
-                    originalLayer = geojsonData;
+                // Store original data for filtering
+                originalLayer = geojsonData;
 
-                    // Filter by default
-                    filterByFeature('Sampling_date', campgInput);
+                // Filter by default
+                filterByFeature('Sampling_date', campgInput);
 
-                    // Create dropdown control
-                    let DDButtControl = L.control({ position: "topleft" });
-                    DDButtControl.onAdd = function (map) {
-                        let div = L.DomUtil.create("div", "ddbutton_control"); 
-                        let select = L.DomUtil.create("select", "dropdown", div);
+                // Create dropdown control
+                let DDButtControl = L.control({ position: "topleft" });
+                DDButtControl.onAdd = function (map) {
+                    let div = L.DomUtil.create("div", "info"); //("div", "ddbutton_control"); 
+                    let select = L.DomUtil.create("select", "dropdown", div);
 
-                        elements.forEach(el => {
-                            let option = document.createElement("option");
-                            option.value = el;
-                            option.text = el;
-                            if (el === campgInput) option.selected = true;
-                            select.appendChild(option);
-                        });
+                    elements.forEach(el => {
+                        let option = document.createElement("option");
+                        option.value = el;
+                        option.text = el;
+                        if (el === campgInput) option.selected = true;
+                        select.appendChild(option);
+                    });
 
-                        select.addEventListener("change", function(e) {
-                            campgInput = e.target.value;
-                            filterByFeature('Sampling_date', campgInput);
-                        });
+                    select.addEventListener("change", function(e) {
+                        campgInput = e.target.value;
+                        filterByFeature('Sampling_date', campgInput);
+                    });
 
-                        return div;
-                    };
-                    DDButtControl.addTo(map);
-                });
-        }
+                    return div;
+                };
+                DDButtControl.addTo(map);
+            });
 
         // -------------------------------------------------------------------------------------------------------------------------------------
         // Style settings for features
@@ -418,7 +444,7 @@
         let panelDiv = document.getElementById("layers_panel");
         if (panelDiv) {
             let title = document.createElement("h4");
-            title.innerText = "Capas";
+            title.innerText = "Layers";
             title.classList.add("panel-title"); // Use a CSS class instead
             panelDiv.appendChild(title);
 
@@ -427,7 +453,7 @@
         } 
 
 
-        campgData_andFbutton()
+
         // -------------------------------------------------------------------------------------------------------------------------------------
                 // Info panel settings --> Descripción de la vega
         let info = L.control({position: "topright"}); // Referencias control
