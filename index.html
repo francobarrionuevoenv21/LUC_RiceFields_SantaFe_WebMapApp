@@ -171,6 +171,9 @@
             maxZoom: 35
         }).addTo(map);
 
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // Sampling points layer with filtering by campaign
 
         // Extract unique campaign values from GeoJSON data
         function extractUniqueCampaigns(geojsonData) {
@@ -190,110 +193,6 @@
             }
             
             return Array.from(campaigns).sort();
-        }
-
-        let geojsonLayer = null;
-        let originalLayer = null;
-        let campgInput = 'C1-Sowing 22-23'; // default value
-
-        fetch("data/data_campaigns_v1.geojson")
-            .then(r => r.json())
-            .then(geojsonData => {
-                const elements = extractUniqueCampaigns(geojsonData);
-
-                // Initialize the layer with all features
-                geojsonLayer = L.geoJSON(geojsonData, {
-                    pointToLayer: function(feature, latlng) {
-                        return L.marker(latlng, { icon: iconByWQI(feature.properties.WQI) });
-                },
-            }).addTo(map);
-
-                // Store original data for filtering
-                originalLayer = geojsonData;
-
-                // Filter by default
-                filterByFeature('Sampling_date', campgInput);
-
-                // Create dropdown control
-                let DDButtControl = L.control({ position: "topleft" });
-                DDButtControl.onAdd = function (map) {
-                    let div = L.DomUtil.create("div", "ddbutton_control"); 
-                    let select = L.DomUtil.create("select", "dropdown", div);
-
-                    elements.forEach(el => {
-                        let option = document.createElement("option");
-                        option.value = el;
-                        option.text = el;
-                        if (el === campgInput) option.selected = true;
-                        select.appendChild(option);
-                    });
-
-                    select.addEventListener("change", function(e) {
-                        campgInput = e.target.value;
-                        filterByFeature('Sampling_date', campgInput);
-                    });
-
-                    return div;
-                };
-                DDButtControl.addTo(map);
-            });
-
-        // Icons remain the same
-        function dropByWQI(d) {
-            if (d > 90){
-                return 'images/droplet_markers/water_drop_gren.png'; // Excellent
-            } else if (d > 45){
-                return 'images/droplet_markers/water_drop_yellow.png'; // Good
-            }  else {
-                return 'images/droplet_markers/water_drop_red.png'; // Very Poor
-            }
-
-        }
-
-        function iconByWQI(d) {
-            if (d > 80){
-                return myIcon = L.icon({
-                    iconUrl: 'images/droplet_markers/water_drop_gren.png',
-                    iconSize: [28, 28],
-                    iconAnchor: [12, 12],
-                }); // Excellent
-            } else if (d > 45){
-                return myIcon = L.icon({
-                    iconUrl: 'images/droplet_markers/water_drop_yellow.png',
-                    iconSize: [28, 28],
-                    iconAnchor: [12, 12],
-                }); // Good
-            }  else {
-                return myIcon = L.icon({
-                    iconUrl: 'images/droplet_markers/water_drop_red.png',
-                    iconSize: [28, 28],
-                    iconAnchor: [12, 12],
-                }); // Very Poor
-            }
-
-        }
-
-        function BigIconByWQI(d) {
-            if (d > 80){
-                return myIcon = L.icon({
-                    iconUrl: 'images/droplet_markers/water_drop_gren.png',
-                    iconSize: [60, 60],
-                    iconAnchor: [35, 35],
-                }); // Excellent
-            } else if (d > 45){
-                return myIcon = L.icon({
-                    iconUrl: 'images/droplet_markers/water_drop_yellow.png',
-                    iconSize: [60, 60],
-                    iconAnchor: [35, 35],
-                }); // Good
-            }  else {
-                return myIcon = L.icon({
-                    iconUrl: 'images/droplet_markers/water_drop_red.png',
-                    iconSize: [60, 60],
-                    iconAnchor: [35, 35],
-                }); // Very Poor
-            }
-
         }
 
         function filterByFeature(feature, value) {
@@ -336,8 +235,199 @@
             }).addTo(map);
         }
 
+        let geojsonLayer = null; // Layer for sampling points
+        let originalLayer = null;
+        let campgInput = 'C1-Sowing 22-23'; // default value
+
+        function campgData_andFbutton(){
+            fetch("data/data_campaigns_v1.geojson")
+                .then(r => r.json())
+                .then(geojsonData => {
+                    const elements = extractUniqueCampaigns(geojsonData);
+
+                    // Initialize the layer with all features
+                    geojsonLayer = L.geoJSON(geojsonData, {
+                        pointToLayer: function(feature, latlng) {
+                            return L.marker(latlng, { icon: iconByWQI(feature.properties.WQI) });
+                    },
+                }).addTo(map);
+
+                    // Store original data for filtering
+                    originalLayer = geojsonData;
+
+                    // Filter by default
+                    filterByFeature('Sampling_date', campgInput);
+
+                    // Create dropdown control
+                    let DDButtControl = L.control({ position: "topleft" });
+                    DDButtControl.onAdd = function (map) {
+                        let div = L.DomUtil.create("div", "ddbutton_control"); 
+                        let select = L.DomUtil.create("select", "dropdown", div);
+
+                        elements.forEach(el => {
+                            let option = document.createElement("option");
+                            option.value = el;
+                            option.text = el;
+                            if (el === campgInput) option.selected = true;
+                            select.appendChild(option);
+                        });
+
+                        select.addEventListener("change", function(e) {
+                            campgInput = e.target.value;
+                            filterByFeature('Sampling_date', campgInput);
+                        });
+
+                        return div;
+                    };
+                    DDButtControl.addTo(map);
+                });
+        }
+
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // Style settings for features
+        
+        // Icon by WQI
+        function dropByWQI(d) {
+            if (d > 90){
+                return 'images/droplet_markers/water_drop_gren.png'; // Excellent
+            } else if (d > 45){
+                return 'images/droplet_markers/water_drop_yellow.png'; // Good
+            }  else {
+                return 'images/droplet_markers/water_drop_red.png'; // Very Poor
+            }
+
+        }
+
+        // Regular icon
+        function iconByWQI(d) {
+            if (d > 80){
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_gren.png',
+                    iconSize: [28, 28],
+                    iconAnchor: [12, 12],
+                }); // Excellent
+            } else if (d > 45){
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_yellow.png',
+                    iconSize: [28, 28],
+                    iconAnchor: [12, 12],
+                }); // Good
+            }  else {
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_red.png',
+                    iconSize: [28, 28],
+                    iconAnchor: [12, 12],
+                }); // Very Poor
+            }
+
+        }
+
+        // Big icon on mouseover
+        function BigIconByWQI(d) {
+            if (d > 80){
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_gren.png',
+                    iconSize: [60, 60],
+                    iconAnchor: [35, 35],
+                }); // Excellent
+            } else if (d > 45){
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_yellow.png',
+                    iconSize: [60, 60],
+                    iconAnchor: [35, 35],
+                }); // Good
+            }  else {
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_red.png',
+                    iconSize: [60, 60],
+                    iconAnchor: [35, 35],
+                }); // Very Poor
+            }
+
+        }
+
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
+        // Additional layers
+
+        let geojsonLayer01; // Paleochannel plain of the Bajo de los Saladillos (PPBS)
+        let geojsonLayer02; // Paddy fields 2022
+        let geojsonLayer03;
+
+        let ppbsBounds = L.layerGroup()// Vegas boundaries & degradación index
+        let paddyFields = L.layerGroup()// Vegas boundaries & degradación index
+
+        // Loading PPBS layer
+        fetch("data/Planicie_con_paleocauces_NW-SW_4326.geojson")
+            .then(function(response) {
+            return response.json();
+            })
+            .then(function(data) {
+            geojsonLayer01 = L.geoJSON(data, {
+                style: {
+                weight: 1,
+                color: "white",
+                fillOpacity: 0 // No fill color
+                }
+            });
+            ppbsBounds.addLayer(geojsonLayer01);
+            });
+
+        ppbsBounds.addTo(map);
+
+        // Loading active paddy fields by 2022 layer
+        fetch("data/paddy_fields_active2022.geojson")
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                    geojsonLayer02 = L.geoJSON(data, {
+                        style: {
+                            weight : 0.75,
+                            color : "black",
+                            fillColor : "#0eb353",
+                            fillOpacity : 0.3},
+                    });
+                    paddyFields.addLayer(geojsonLayer02);
+            });
+
+        paddyFields.addTo(map);
+
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // Layers controller
+
+        // Overlay layers
+        let overlayBound = {
+            "<b>PPBS boundaries</b>": ppbsBounds,
+            "<b>Active paddy fields (2022)</b>": paddyFields
+        };
+
+        // Panel for controller
+        let layers_panel = L.control({ position: "topleft" });
+        layers_panel.onAdd = function(map) {
+            let div = L.DomUtil.create("div", "info");
+            div.id = "layers_panel";
+            return div;
+        };
+        layers_panel.addTo(map);
+
+        // Layers controller
+        let customControl = L.control.layers(null, overlayBound, { collapsed: false });
+
+        // Panel settings
+        let panelDiv = document.getElementById("layers_panel");
+        if (panelDiv) {
+            let title = document.createElement("h4");
+            title.innerText = "Capas";
+            title.classList.add("panel-title"); // Use a CSS class instead
+            panelDiv.appendChild(title);
+
+            customControl.addTo(map);
+            panelDiv.appendChild(customControl.getContainer());
+        } 
+
+
+        campgData_andFbutton()
         // -------------------------------------------------------------------------------------------------------------------------------------
                 // Info panel settings --> Descripción de la vega
         let info = L.control({position: "topright"}); // Referencias control
@@ -399,9 +489,9 @@
             "WQI: " + e.target.feature.properties.WQI + "<br>" +
             "pH: " + e.target.feature.properties.ph_WQI + "<br>" +
             "Conductivity: " + e.target.feature.properties.EC_WQI + " uS/cm" + "<br>" +
-            "Oxygen Demand (DO)???: " + e.target.feature.properties.DO_WQI + " mg/L" + "<br>" +
-            "Total Suspended Solids (TSS): " + e.target.feature.properties.TSS_WQI + " mg/L" + "<br>" +
-            "Biochemichal Oxygen Demand (DBO5): " + e.target.feature.properties.BOD5_WQI + " mg/L" + "<br>" +
+            "DO???: " + e.target.feature.properties.DO_WQI + " mg/L" + "<br>" +
+            "TSS: " + e.target.feature.properties.TSS_WQI + " mg/L" + "<br>" +
+            "DBO5: " + e.target.feature.properties.BOD5_WQI + " mg/L" + "<br>" +
             "Nitrate: " + e.target.feature.properties.Nitrate_WQI + " mg/L" + "<br>" +
             "Nitrite: " + e.target.feature.properties.Nitrite_WQI + " mg/L" + "<br>" +
             "Ammonium: " + e.target.feature.properties.Ammonium_WQI + " mg/L" + "<br>" +
