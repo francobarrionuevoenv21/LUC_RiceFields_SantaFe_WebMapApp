@@ -44,10 +44,17 @@
 
         #layers_panel .leaflet-control-layers {
             margin-top: 0; /* reduce space above layers selector */
+            width: 100%;
+            padding: 0px;
+            background: transparent !important;
+            border: none !important; /* Make the border line transparent */
+            color:#0a090a; /* Change text color */
+            font-family: Arial, sans-serif;
+            font-size: 13px;
         }
 
-        /* Style dropdown button */
 
+        /* Style dropdown button */
         #ddbutton_control{
             /*background-color: #afc3c3;*/
             width: 220px;
@@ -60,7 +67,11 @@
             width: 100%;         /* make dropdown fill container */
             padding: 2px 6px;
             border: none;
-            outline: none;  
+            outline: none;
+            color:#0a090a;  /* Change text color */
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
             
         }
 
@@ -69,6 +80,7 @@
             padding: 0 0 4px; /* optional: keep a small bottom padding */
             font-size: 17px;  /* adjust size if needed */
             color:#133131;
+            font-family: Arial, sans-serif;
         }
 
         #ddbutton_control .dropdown option {
@@ -77,15 +89,40 @@
         }
 
 
-        #dynamic-title {
+        /* Style for wqi panel */
+        #dynamic-title_wqi {
+            margin: 5px;
+            padding: 0 0 4px;
             font-size: 17px;
-            color: #e4b242; /* Customize title color */
+            color: #133131;/* Customize title color */
             margin-bottom: 5px;
         }
 
-        #current_feature {
+        #wqi_value {
+            margin: 5px;
+            padding: 0 0 0px;
+            font-size: 20px;
+            font-weight: bold;
+            color: black;
+        }
+
+        #current_feature_wqi {
+            margin: 5px;
+            padding: 0 0 0px;
             font-size: 14px;
             color: black;
+        }
+
+        /* Style for IBRI panel */
+        #ibri_value {
+            margin: 8px;
+            padding: 0 0 0px;
+            font-size: 20px;
+            font-weight: bold;
+            color: black;
+            text-align: center;   /* ✅ Center text */
+            display: block;       /* Ensures it takes full width */
+            width: 100%; 
         }
 
         /* Style for the entire legend container */
@@ -137,20 +174,7 @@
         .custom-control {
         padding: 0; /* Add space between the controls */
         }
-        
-        .leaflet-control-layers {
-            width: 100%;
-            /*min-width: 250px !important; /* Set a minimum width */
-            max-width: 350px; /* Optional: set a max width */
-            min-height: 50px !important; /* Set a minimum height */
-            max-height: 400px; /* Optional: set a max height */
-            padding: 0px; /* Add padding */
-            background: transparent !important;
-            border: none !important; /* Make the border line transparent */
-            color: "black"; /* Change text color */
-            font-family: Arial, sans-serif;
-            font-size: 13px;
-        }
+    
 
         @media (max-width: 600px) and (orientation: portrait) {
             .legend {
@@ -269,7 +293,7 @@
                         layer.setIcon(BigIconByWQI(feature.properties.WQI));
                     });
                     layer.on("mouseout", function(e) {
-                        reset_info_SamPoints(e, geojsonLayer);
+                        remove_wqi();
                         remove_IBRI();
                         remove_Herbcs();
                         layer.setIcon(iconByWQI(feature.properties.WQI) );
@@ -479,26 +503,21 @@
 
         // -------------------------------------------------------------------------------------------------------------------------------------
                 // Info panel settings --> Descripción de la vega
-        let info = L.control({position: "topright"}); // Referencias control
+        let wqi_panel = L.control({position: "topright"}); // Referencias control
         //let IBRI_panel = L.control({position: "topright"}); // IBRI logo control
 
-        function infoDiv(divWidth) { // show customized size panel (NOTE: change name!!)
-            if (info._map) {
-                info.remove(); // Remove existing control if already added
-            }
-
-            info.onAdd = function() {
-                let div = L.DomUtil.create("div", "info");
-                div.innerHTML = `
-                    <h4 id="dynamic-title">Item description</h4>
-                    <p id="current_feature"></p>`;
-                div.style.width = divWidth; // Only keep width if it's dynamic
-                return div;
-            };
-
-            info.addTo(map); // Add the control to the map
-            //IBRI_panel.addTo(map);
-        }
+        wqi_panel.onAdd = function() {
+            let div = L.DomUtil.create("div", "info");
+            div.innerHTML = `
+                <h4 id="dynamic-title_wqi"></h4>
+                <p id="wqi_value"></p>
+                <p id="current_feature_wqi"></p>`;
+            div.style.width = '30em';
+            return div;
+        };
+        //info.addTo(map); // Add the control to the map
+        //IBRI_panel.addTo(map);
+        
         
         // Initialize infoDiv
         // infoDiv('15em') 
@@ -506,13 +525,18 @@
         let IBRI_panel = L.control({position: "topright"})
         IBRI_panel.onAdd = function(map) {
             let div = L.DomUtil.create("div", "info"); // change info by ibri_panel or similar
-            div.innerHTML = 
-                //<h4 id="dynamic-title">Item description</h4>
-                `<p id="current_feature_ibri"></p>`;
-            div.style.width = '35em'; // Only keep width if it's dynamic
+            div.innerHTML = `<p id="ibri_value"></p>`;
+            div.style.width = '30em'; // Only keep width if it's dynamic
             div.id = "ibri_panel";
             return div;
         };
+
+        function setIBRIBackground(color) {
+            let panel = document.getElementById("ibri_panel");
+            if (panel) {
+                panel.style.backgroundColor = color;
+            }
+        }
 
         let Herbcs_panel = L.control({position: "topright"})
         Herbcs_panel.onAdd = function(map) {
@@ -528,46 +552,78 @@
         // -------------------------------------------------------------------------------------------------------------------------------------
         // Features styles and events
 
-        function info_feature_SamPoints(e) {
-            infoDiv('35em')
-            info_p = document.getElementById("current_feature");
-            info_h4 = document.getElementById("dynamic-title");
-            info_h4.innerText = e.target.feature.properties.Description//"Sampling point & WQI info"
-            info_p.innerHTML =
-            //"Point description: " + e.target.feature.properties.Description + "<br>"+
-            "WQI: " + e.target.feature.properties.WQI + "<br>" +
-            "pH: " + e.target.feature.properties.ph_WQI + "<br>" +
-            "Conductivity: " + e.target.feature.properties.EC_WQI + " uS/cm" + "<br>" +
-            "DO???: " + e.target.feature.properties.DO_WQI + " mg/L" + "<br>" +
-            "TSS: " + e.target.feature.properties.TSS_WQI + " mg/L" + "<br>" +
-            "DBO5: " + e.target.feature.properties.BOD5_WQI + " mg/L" + "<br>" +
-            "Nitrate: " + e.target.feature.properties.Nitrate_WQI + " mg/L" + "<br>" +
-            "Nitrite: " + e.target.feature.properties.Nitrite_WQI + " mg/L" + "<br>" +
-            "Ammonium: " + e.target.feature.properties.Ammonium_WQI + " mg/L" + "<br>" +
-            "Phosphate: " + e.target.feature.properties.Phosphate_WQI + " mg/L" + "<br>" +
-            "Cr: " + e.target.feature.properties.Cr_WQI + " mg/L" + "<br>" +
-            "Cu: " + e.target.feature.properties.Cu_WQI + " mg/L" + "<br>" +
-            "As: " + e.target.feature.properties.As_WQI + " mg/L" + "<br>" +
-            "Zn: " + e.target.feature.properties.Zn_WQI + " mg/L" + "<br>" +
-            "Mn: " + e.target.feature.properties.Mn_WQI + " mg/L" + "<br>" +
-            "Ni: " + e.target.feature.properties.Ni_WQI + " mg/L" + "<br>" +
-            "Pb: " + e.target.feature.properties.Pb_WQI + " mg/L" + "<br>" +
-            "Observations: " + e.target.feature.properties.Observation + "<br>";
+        function label_wqi(wqi) {
+            if (wqi > 95){
+                return "Excellent";
+            } else if (wqi > 80){
+                return "Good";
+            } else if (wqi > 65){
+                return "Bad";
+            } else if (wqi > 45){
+                return "Marginal";
+            } else if (wqi > 30){
+                return "Poor";
+            } else {
+                return "Very Poor";
+            }
         }
 
+        function info_feature_SamPoints(e) {
+            wqi_panel.addTo(map);
+            wqi_h4 = document.getElementById("dynamic-title_wqi");
+            wqi_p_wqi = document.getElementById("wqi_value");
+            wqi_p_params = document.getElementById("current_feature_wqi");
+            wqi_p_wqi.innerHTML = "WQI: " + e.target.feature.properties.WQI + " (" + label_wqi(e.target.feature.properties.WQI) + ")"; //+ "<br>" +
+            wqi_h4.innerText = e.target.feature.properties.Description//"Sampling point & WQI info"
+
+            wqi_p_params.innerHTML =
+            //"Point description: " + e.target.feature.properties.Description + "<br>"+
+            "<b>pH:</b> " + e.target.feature.properties.ph_WQI + "<br>" +
+            "<b>Conductivity:</b> " + e.target.feature.properties.EC_WQI + " uS/cm" + "<br>" +
+            "<b>DO:</b> " + e.target.feature.properties.DO_WQI + " mg/L" + "<br>" +
+            "<b>TSS:</b> " + e.target.feature.properties.TSS_WQI + " mg/L" + "<br>" +
+            "<b>DBO5:</b> " + e.target.feature.properties.BOD5_WQI + " mg/L" + "<br>" +
+            "<b>Nitrate:</b> " + e.target.feature.properties.Nitrate_WQI + " mg/L" + "<br>" +
+            "<b>Nitrite:</b> " + e.target.feature.properties.Nitrite_WQI + " mg/L" + "<br>" +
+            "<b>Ammonium:</b> " + e.target.feature.properties.Ammonium_WQI + " mg/L" + "<br>" +
+            "<b>Phosphate:</b> " + e.target.feature.properties.Phosphate_WQI + " mg/L" + "<br>" +
+            "<b>Cr:</b> " + e.target.feature.properties.Cr_WQI + " mg/L" + "<br>" +
+            "<b>Cu:</b> " + e.target.feature.properties.Cu_WQI + " mg/L" + "<br>" +
+            "<b>As:</b> " + e.target.feature.properties.As_WQI + " mg/L" + "<br>" +
+            "<b>Zn:</b> " + e.target.feature.properties.Zn_WQI + " mg/L" + "<br>" +
+            "<b>Mn:</b> " + e.target.feature.properties.Mn_WQI + " mg/L" + "<br>" +
+            "<b>Ni:</b> " + e.target.feature.properties.Ni_WQI + " mg/L" + "<br>" +
+            "<b>Pb:</b> " + e.target.feature.properties.Pb_WQI + " mg/L" + "<br>" +
+            "<b>Observations:</b> " + e.target.feature.properties.Observation + "<br>";
+        }
+
+        /*
         function reset_info_SamPoints(e, gjLayer) {
             //infoDiv('15em')
             info.remove()
             info_p.innerHTML = "";
             info_h4.innerText = "Referencias";
         }
+        */
+
+        function set_ibri_background(ibri_value) {
+            if (ibri_value > 19.07){
+                return '#a70000'
+            } else if (ibri_value > 14.72){
+                return '#ff0000'
+            } else if (ibri_value > 10.38){
+                return '#ff5252'
+            } else if (ibri_value > 6.03){
+                return '#ff7b7b'
+            } else {
+                return '#ffbaba'
+            }
+        }
 
         function show_IBRI(e){
             IBRI_panel.addTo(map);
-
-            //info_h4 = document.getElementById("dynamic-title");
-            //info_h4.innerText = "Sampling point & WQI info"
-            info_p = document.getElementById("current_feature_ibri");
+            setIBRIBackground(set_ibri_background(e.target.feature.properties.IBRI));
+            info_p = document.getElementById("ibri_value");
             info_p.innerHTML =
             "IBRI: " + e.target.feature.properties.IBRI
         }
@@ -586,13 +642,11 @@
                 const escapedValue = e.target.feature.properties.Cyhalofop.replace(/</g, '&lt;');
                 content += "Cyhalofop: " + escapedValue + " µg/L<br>"; 
             } 
-            
             // Metolachlor
             if (e.target.feature.properties.Metolachlor !== "NA"){
                 const escapedValue = e.target.feature.properties.Metolachlor.replace(/</g, '&lt;');
                 content += "Metolachlor: " + escapedValue + " µg/L<br>"; 
             }
-
             // Glyphosate
             if (e.target.feature.properties.Glyphosate !== "NA"){
                 const escapedValue = e.target.feature.properties.Glyphosate.replace(/</g, '&lt;');
@@ -692,8 +746,8 @@
             Herbcs_panel.remove();
         }
 
-        function remove_info(){
-            info.remove();
+        function remove_wqi(){
+            wqi_panel.remove();
         }
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------    
