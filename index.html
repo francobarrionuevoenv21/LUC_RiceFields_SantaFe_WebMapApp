@@ -143,35 +143,23 @@
         }
 
         /* Style for the entire legend container */
-        .legend {
-            background-color: #697f3dd8; /* Light transparent background */
-            padding: 10px;
-            border-radius: 6px;
-            box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
-            font-family: Arial, sans-serif;
-            font-size: 16px;
-            line-height: 1.5;
-        }
 
-        .legend-title {
+        #legend_panel .legend-title {
+            margin: 5px;
+            padding: 0 5px 2px;
+            font-size: 17px;
+            color: #133131;/* Customize title color */
+            margin-bottom: 5px;
             font-weight: bold;
-            color: #e4b242;
-            margin-bottom: 8px;
         }
 
-        .legend-item {
-            color: "black";
+        #legend_panel .legend-item {
+            margin: 5px;
+            padding: 0 0 4px;
             font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .legend-box {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            margin-right: 8px;
-            vertical-align: middle;
-            border: 1px solid #999;
+            color:  black;/* Customize title color */
+            margin-bottom: 5px;
+            font-weight: bold;
         }
 
         /*CHECK THIS!!!*/
@@ -571,10 +559,14 @@
 
         // Function that runs when legend is added to map
         legend.onAdd = function() {
-            let div = L.DomUtil.create("div", "legend");        
+            let div = L.DomUtil.create("div", "info");        
             div.innerHTML = 
                 '<div class="legend-title">WQI References</div>' +
-                '<div class="legend-item" style="width:18px; height:18px; margin-right:5px; vertical-align:middle;"><img src="images/droplet_markers/water_drop_green.png" class="legend-icon">0.00–0.20</div>';
+                '<div class="legend-item"><img src="images/droplet_markers/water_drop_green.png" style="width:20px; height:20px; margin-right:5px; vertical-align:middle;">Good-Excellent</div>'+
+                '<div class="legend-item"><img src="images/droplet_markers/water_drop_yellow.png" style="width:20px; height:20px; margin-right:5px; vertical-align:middle;">Marginal-Bad</div>'+
+                '<div class="legend-item"><img src="images/droplet_markers/water_drop_red.png" style="width:20px; height:20px; margin-right:5px; vertical-align:middle;">Very poor-Poor</div>';
+            div.style.width = '13em';
+            div.id = "legend_panel";
             return div;
         };
 
