@@ -216,8 +216,23 @@
 
                 #layers_panel .leaflet-control-layers {
                     font-size: 12px; /* Reduce 1 point */
+                    width: 100%;
+                }
+            /* Style dropdown button */
+                #ddbutton_control{
+                    max-width: 45%;
                 }
 
+                #ddbutton_control .dropdown {
+                    width: 100%;         /* make dropdown fill container */
+                    font-size: 12px;
+                    
+                }
+
+                #ddbutton_control .panel-title {
+                    font-size: 15px;  /* adjust size if needed */
+                }
+    
         }
 
         @media (max-width: 800px) and (orientation: landscape) {
