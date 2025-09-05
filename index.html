@@ -182,6 +182,7 @@
     
 
         @media (max-width: 600px) and (orientation: portrait) {
+            /*
             .legend {
                 max-width: 40%;
                 font-size: 14px;
@@ -192,15 +193,30 @@
                 font-size: 14px;
             }
             .leaflet-control-layers {
-                width: 90%; /* Fill the panel */
+                width: 90%; /* Fill the panel 
                 max-width: none;
                 font-size: 14px;
             }
+            
             .info {
                 max-width: 40%;
                 font-size: 14px;
                 top: 10px;
-            }
+            } 
+            */
+
+            /* Style layers controller panel */
+                #layers_panel {
+                    max-width: 40%;
+                }
+
+                #layers_panel .panel-title {
+                    font-size: 15px;  /* adjust size if needed */
+                }
+
+                #layers_panel .leaflet-control-layers {
+                    font-size: 11px;
+                }
 
             #legend_panel {
                 max-width: 50%;
