@@ -299,12 +299,14 @@
                         info_feature_SamPoints(e);
                         show_IBRI(e);
                         show_Herbcs(e);
+                        remove_legend();
                         layer.setIcon(BigIconByWQI(feature.properties.WQI));
                     });
                     layer.on("mouseout", function(e) {
                         remove_wqi();
                         remove_IBRI();
                         remove_Herbcs();
+                        show_legend();
                         layer.setIcon(iconByWQI(feature.properties.WQI) );
                     });
                 }
@@ -766,6 +768,10 @@
             info_p.innerHTML = content;
         }
 
+        function show_legend(){
+            legend.addTo(map);
+        }
+
         function remove_IBRI(){
             IBRI_panel.remove();
         }
@@ -776,6 +782,10 @@
 
         function remove_wqi(){
             wqi_panel.remove();
+        }
+
+        function remove_legend(){
+            legend.remove();
         }
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------    
