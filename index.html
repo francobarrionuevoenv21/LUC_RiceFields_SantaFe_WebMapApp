@@ -125,6 +125,23 @@
             width: 100%; 
         }
 
+        /* Style for herbcs panel */
+
+        #dynamic-title_herbcs {
+            margin: 5px;
+            padding: 0 0 4px;
+            font-size: 13px;
+            color: #133131;/* Customize title color */
+            margin-bottom: 5px;
+        }
+
+        #current_feature_herbcs {
+            margin: 5px;
+            padding: 0 0 0px;
+            font-size: 12px;
+            color: black;
+        }
+
         /* Style for the entire legend container */
         .legend {
             background-color: #697f3dd8; /* Light transparent background */
@@ -541,13 +558,28 @@
         let Herbcs_panel = L.control({position: "topright"})
         Herbcs_panel.onAdd = function(map) {
             let div = L.DomUtil.create("div", "info"); // change info by ibri_panel or similar
-            div.innerHTML = 
-                //<h4 id="dynamic-title">Item description</h4>
-                `<p id="current_feature_herbcs"></p>`;
-            div.style.width = '35em'; // Only keep width if it's dynamic
+            div.innerHTML = `
+                <h4 id="dynamic-title_herbcs"> Herbicides in water </h4>
+                <p id="current_feature_herbcs"></p>`;
+            div.style.width = '30em'; // Only keep width if it's dynamic
             div.id = "herbcs_panel";
             return div;
         };
+
+        // Create Leaflet control object for legend
+        let legend = L.control({position: "bottomleft"});
+
+        // Function that runs when legend is added to map
+        legend.onAdd = function() {
+            let div = L.DomUtil.create("div", "legend");        
+            div.innerHTML = 
+                '<div class="legend-title">WQI References</div>' +
+                '<div class="legend-item" style="width:18px; height:18px; margin-right:5px; vertical-align:middle;"><img src="images/droplet_markers/water_drop_green.png" class="legend-icon">0.00–0.20</div>';
+            return div;
+        };
+
+        // Add Legend to Map
+        legend.addTo(map);
 
         // -------------------------------------------------------------------------------------------------------------------------------------
         // Features styles and events
@@ -640,95 +672,95 @@
             // Cyhalofop
             if (e.target.feature.properties.Cyhalofop !== "NA"){
                 const escapedValue = e.target.feature.properties.Cyhalofop.replace(/</g, '&lt;');
-                content += "Cyhalofop: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Cyhalofop:</b> " + escapedValue + " µg/L<br>"; 
             } 
             // Metolachlor
             if (e.target.feature.properties.Metolachlor !== "NA"){
                 const escapedValue = e.target.feature.properties.Metolachlor.replace(/</g, '&lt;');
-                content += "Metolachlor: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Metolachlor:</b> " + escapedValue + " µg/L<br>"; 
             }
             // Glyphosate
             if (e.target.feature.properties.Glyphosate !== "NA"){
                 const escapedValue = e.target.feature.properties.Glyphosate.replace(/</g, '&lt;');
-                content += "Glyphosate: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Glyphosate:</b> " + escapedValue + " µg/L<br>"; 
             }
 
             // AMPA
             if (e.target.feature.properties.AMPA !== "NA"){
                 const escapedValue = e.target.feature.properties.AMPA.replace(/</g, '&lt;');
-                content += "AMPA: " + escapedValue + " µg/L<br>"; 
+                content += "<b>AMPA:</b> " + escapedValue + " µg/L<br>"; 
             }
 
             // Acetochlor
             if (e.target.feature.properties.Acetochlor !== "NA"){
                 const escapedValue = e.target.feature.properties.Acetochlor.replace(/</g, '&lt;');
-                content += "Acetochlor: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Acetochlor:</b> " + escapedValue + " µg/L<br>"; 
             }
 
             // Atrazine
             if (e.target.feature.properties.Atrazine !== "NA"){
                 const escapedValue = e.target.feature.properties.Atrazine.replace(/</g, '&lt;');
-                content += "Atrazine: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Atrazine:</b> " + escapedValue + " µg/L<br>"; 
             }
 
             // Azoxystrobin
             if (e.target.feature.properties.Azoxystrobin !== "NA"){
                 const escapedValue = e.target.feature.properties.Azoxystrobin.replace(/</g, '&lt;');
-                content += "Azoxystrobin: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Azoxystrobin:</b> " + escapedValue + " µg/L<br>"; 
             }
 
             // Azinfos-methyl
             if (e.target.feature.properties.Azinfos_methyl !== "NA"){
                 const escapedValue = e.target.feature.properties.Azinfos_methyl.replace(/</g, '&lt;');
-                content += "Azinfos-methyl: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Azinfos-methyl:</b> " + escapedValue + " µg/L<br>"; 
             }
 
             // Cyproconazole
             if (e.target.feature.properties.Cyproconazole !== "NA"){
                 const escapedValue = e.target.feature.properties.Cyproconazole.replace(/</g, '&lt;');
-                content += "Cyproconazole: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Cyproconazole:</b> " + escapedValue + " µg/L<br>"; 
             }
             
             // Tebuconazole
             if (e.target.feature.properties.Tebuconazole !== "NA"){
                 const escapedValue = e.target.feature.properties.Tebuconazole.replace(/</g, '&lt;');
-                content += "Tebuconazole: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Tebuconazole:</b> " + escapedValue + " µg/L<br>"; 
             }
 
             // Fipronil-sulfona
             if (e.target.feature.properties.Fipronil_sulfona !== "NA"){
                 const escapedValue = e.target.feature.properties.Fipronil_sulfona.replace(/</g, '&lt;');
-                content += "Fipronil-sulfona: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Fipronil-sulfona:</b> " + escapedValue + " µg/L<br>"; 
             } 
 
             // Haloxyfop
             if (e.target.feature.properties.Haloxyfop !== "NA"){
                 const escapedValue = e.target.feature.properties.Haloxyfop.replace(/</g, '&lt;');
-                content += "Haloxyfop: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Haloxyfop:</b> " + escapedValue + " µg/L<br>"; 
             } 
 
             // Haloxyfop-methyl
             if (e.target.feature.properties.Haloxyfop_methyl !== "NA"){
                 const escapedValue = e.target.feature.properties.Haloxyfop_methyl.replace(/</g, '&lt;');
-                content += "Haloxyfop-methyl: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Haloxyfop-methyl:</b> " + escapedValue + " µg/L<br>"; 
             }
 
             // Imazapic
             if (e.target.feature.properties.Imazapic !== "NA"){
                 const escapedValue = e.target.feature.properties.Imazapic.replace(/</g, '&lt;');
-                content += "Imazapic: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Imazapic:</b> " + escapedValue + " µg/L<br>"; 
             }
 
             // Imazethapyr
             if (e.target.feature.properties.Imazethapyr !== "NA"){
                 const escapedValue = e.target.feature.properties.Imazethapyr.replace(/</g, '&lt;');
-                content += "Imazethapyr: " + escapedValue + " µg/L<br>"; 
+                content += "<b>Imazethapyr:</b> " + escapedValue + " µg/L<br>"; 
             }
 
             // Metsulfuron-methyl
             if (e.target.feature.properties.Metsulfuron_methyl !== "NA"){
                 const escapedValue = e.target.feature.properties.Metsulfuron_methyl.replace(/</g, '&lt;');
-                content += "Metsulfuron-methyl: " + escapedValue + " µg/L<br>"; 
+                content += "Metsulfuron-methyl:</b> " + escapedValue + " µg/L<br>"; 
             }
 
             if (content === "") {
