@@ -600,18 +600,27 @@
         // -------------------------------------------------------------------------------------------------------------------------------------
                 // Info panel settings --> Descripción de la vega
         let wqi_panel = L.control({position: "topright"}); // Referencias control
+        wqi_panel.remove()
         //let IBRI_panel = L.control({position: "topright"}); // IBRI logo control
 
-        wqi_panel.onAdd = function() {
-            let div = L.DomUtil.create("div", "info");
-            div.innerHTML = `
-                <h4 id="dynamic-title_wqi"></h4>
-                <p id="wqi_value"></p>
-                <p id="current_feature_wqi"></p>`;
-            div.style.width = '30em';
-            div.id = "wqi_panel";
-            return div;
-        };
+        function show_wqi_panel(divWidth) {
+            if (wqi_panel._map) {
+                wqi_panel.remove(); // Remove existing control if already added
+            }
+
+            wqi_panel.onAdd = function() {
+                let div = L.DomUtil.create("div", "info");
+                div.innerHTML = `
+                    <h4 id="dynamic-title_wqi"></h4>
+                    <p id="wqi_value"></p>
+                    <p id="current_feature_wqi"></p>`;
+                div.style.width = divWidth //'30em';
+                div.id = "wqi_panel";
+                return div;
+            };
+
+            wqi_panel.addTo(map);
+        }
         //info.addTo(map); // Add the control to the map
         //IBRI_panel.addTo(map);
         
@@ -685,7 +694,8 @@
         }
 
         function info_feature_SamPoints(e) {
-            wqi_panel.addTo(map);
+            //wqi_panel.addTo(map);
+            show_wqi_panel('30em');
             wqi_h4 = document.getElementById("dynamic-title_wqi");
             wqi_p_wqi = document.getElementById("wqi_value");
             wqi_p_params = document.getElementById("current_feature_wqi");
