@@ -233,6 +233,72 @@
                     font-size: 15px;  /* adjust size if needed */
                 }
 
+                /* Style for wqi panel */
+
+                #wqi_panel {
+                    max-width: 45%;
+                }
+
+                #dynamic-title_wqi {
+                    font-size: 16px;
+                }
+
+                #wqi_value {
+                    font-size: 18px;
+                }
+
+                #current_feature_wqi {
+                    font-size: 13px;
+                }
+
+                /* Style for IBRI panel */
+                #ibri_value {
+                    margin: 8px;
+                    padding: 0 0 0px;
+                    font-size: 20px;
+                    font-weight: bold;
+                    color: black;
+                    text-align: center;   /* ✅ Center text */
+                    display: block;       /* Ensures it takes full width */
+                    width: 100%; 
+                }
+
+                /* Style for herbcs panel */
+
+                #dynamic-title_herbcs {
+                    margin: 5px;
+                    padding: 0 0 4px;
+                    font-size: 13px;
+                    color: #133131;/* Customize title color */
+                    margin-bottom: 5px;
+                }
+
+                #current_feature_herbcs {
+                    margin: 5px;
+                    padding: 0 0 0px;
+                    font-size: 12px;
+                    color: black;
+                }
+
+                /* Style for the entire legend container */
+
+                #legend_panel .legend-title {
+                    margin: 5px;
+                    padding: 0 5px 2px;
+                    font-size: 17px;
+                    color: #133131;/* Customize title color */
+                    margin-bottom: 5px;
+                    font-weight: bold;
+                }
+
+                #legend_panel .legend-item {
+                    margin: 5px;
+                    padding: 0 0 4px;
+                    font-size: 14px;
+                    color:  black;/* Customize title color */
+                    margin-bottom: 5px;
+                    font-weight: bold;
+                }
     
         }
 
@@ -553,6 +619,7 @@
                 <p id="wqi_value"></p>
                 <p id="current_feature_wqi"></p>`;
             div.style.width = '30em';
+            div.id = "wqi_panel";
             return div;
         };
         //info.addTo(map); // Add the control to the map
