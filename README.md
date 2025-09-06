@@ -12,15 +12,23 @@ This interactive map is complementary to the work presented in
 
 #### Cite this work:
 
-Torre Azzaroni, M.L., Barrionuevo, F.D., Rubio, M.C. y Morandeira, N.S. (2025). *Degradación de las vegas y bosquecitos de chacay por cambios de cobertura e incendios en la cuenca del río Blanco (Mendoza, Argentina)*. VIII Congreso Nacional de Conservación de la Biodiversidad. San Juan, Argentina.
-
-Carlos David Clauser (1), Julieta Peluso (1), Carolina Aronzon (1), Franco Barrionuevo (2), Vanesa Ali Santoro (1), Natalia Morandeira (1)
- (1) IIIA-CONICET-UNSAM (Environmental Research and Engineering Institute, National Scientific and Technical Research Council - Habitat and Sustainability School, National University of San Martín), Argentina
- (2) ECyT-UNSAM (Science and Technology School, National University of San Martín), Argentina
- cdclauser@unsam.edu.a
+Clauser, C. D., Peluso, J., Aronzon, C., Barrionuevo, F., Ali Santoro, V., Morandeira, N. *Land use changes and anthropogenic impacts due to rice fields in Santa Fe (Argentina)*. EVENTO
 
 
-### Resumen del trabajo 
+### Summary
 
 RESUMEN
 
+**Keywords:** kw1, kw2, k2n
+
+**Author's contact:** Carlos David Clauser, [cdclauser@unsam.edu.ar](mailto:cdclauser@unsam.edu.ar)
+
+
+#### Afiliations
+
+_Carlos David Clauser, Julieta Peluso, Carolina Aronzon, Vanesa Ali Santoro and Natalia Morandeira:_ 
+
+- IIIA-CONICET-UNSAM (Environmental Research and Engineering Institute, National Scientific and Technical Research Council - Habitat and Sustainability School, National University of San Martín), Argentina
+ 
+_Franco David Barrionuevo:_
+- ECyT-UNSAM (Science and Technology School, National University of San Martín), Argentina
