@@ -19,7 +19,7 @@
             overflow: hidden; /* Optional: Prevents scrolling */
         }
         
-        /* CLASS settings */
+        /* CLASS and id style settings */
         /* Style for the info object*/
         .info {
             background-color: #afc3c3;
@@ -126,7 +126,6 @@
         }
 
         /* Style for herbcs panel */
-
         #dynamic-title_herbcs {
             margin: 5px;
             padding: 0 0 4px;
@@ -143,7 +142,6 @@
         }
 
         /* Style for the entire legend container */
-
         #legend_panel .legend-title {
             margin: 5px;
             padding: 0 5px 2px;
@@ -162,11 +160,6 @@
             font-weight: bold;
         }
 
-        /*CHECK THIS!!!*/
-        .info h4 {
-            margin: 0 0 5px;
-        }
-
         /* Style for layers controller panel */
         #panel {
             background-color: #697f3dd6;
@@ -181,6 +174,7 @@
         }
     
 
+        /* Responsive design for smaller screens in portrair orientation */
         @media (max-width: 600px) and (orientation: portrait) {
 
             /* Style layers controller panel */
@@ -254,7 +248,6 @@
                 }
 
                 /* Style for the entire legend container */
-
                 #legend_panel{
                     bottom: 60px;
                 }
@@ -269,6 +262,7 @@
     
         }
 
+        /* Responsive design for smaller screens in landscape orientation. Not strictly customized */
         @media (max-width: 800px) and (orientation: landscape) {
             .legend {
                 max-width: 40%;
@@ -299,19 +293,18 @@
     <script>
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
-        // Initial settings
+        // Initial map element settings
         let map = L.map("map", {zoomControl: false}).setView([-30.97, -60.20], 9);
-        //map.zoomControl.setPosition('bottomleft');
 
         L.tileLayer("https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attribution/">CartoDB</a>',
             subdomains: "abcd",
-            maxZoom: 35
+            maxZoom: 50
         }).addTo(map);
 
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
-        // Sampling points layer with filtering by campaign
+        // Complementary functions for sampling points data processing
 
         // Extract unique campaign values from GeoJSON data
         function extractUniqueCampaigns(geojsonData) {
@@ -333,6 +326,7 @@
             return Array.from(campaigns).sort();
         }
 
+        // Filter GeoJSON data by a specific feature and value
         function filterByFeature(feature, value) {
             if (!originalLayer) return;
 
@@ -347,6 +341,7 @@
             updateLayer(filteredData02);
         }
 
+        // Update data according to the campaign filter and define events when features are hovered
         function updateLayer(filteredData) {
             if (geojsonLayer) {
                 map.removeLayer(geojsonLayer);
@@ -375,11 +370,16 @@
             }).addTo(map);
         }
 
-        
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // Load and process sampling points GeoJSON data
+
+        // Sampling points layer ---------------------------------------------------------------------------------------------------------------
         let geojsonLayer = null; // Layer for sampling points
         let originalLayer = null;
-        let campgInput = 'C1-Sowing 22-23'; // default value
+        let campgInput = 'C1-Sowing 22-23'; // default value: first campaign (C1)
 
+        // Load campaign geojson data and define dropdown filtering button
         fetch("data/data_campaigns_v1.geojson")
             .then(r => r.json())
             .then(geojsonData => {
@@ -428,80 +428,15 @@
                 };
                 DDButtControl.addTo(map);
             });
-
-        // -------------------------------------------------------------------------------------------------------------------------------------
-        // Style settings for features
         
-        // Icon by WQI
-        function dropByWQI(d) {
-            if (d > 90){
-                return 'images/droplet_markers/water_drop_gren.png'; // Excellent
-            } else if (d > 45){
-                return 'images/droplet_markers/water_drop_yellow.png'; // Good
-            }  else {
-                return 'images/droplet_markers/water_drop_red.png'; // Very Poor
-            }
-
-        }
-
-        // Regular icon
-        function iconByWQI(d) {
-            if (d > 80){
-                return myIcon = L.icon({
-                    iconUrl: 'images/droplet_markers/water_drop_gren.png',
-                    iconSize: [28, 28],
-                    iconAnchor: [12, 12],
-                }); // Excellent
-            } else if (d > 45){
-                return myIcon = L.icon({
-                    iconUrl: 'images/droplet_markers/water_drop_yellow.png',
-                    iconSize: [28, 28],
-                    iconAnchor: [12, 12],
-                }); // Good
-            }  else {
-                return myIcon = L.icon({
-                    iconUrl: 'images/droplet_markers/water_drop_red.png',
-                    iconSize: [28, 28],
-                    iconAnchor: [12, 12],
-                }); // Very Poor
-            }
-
-        }
-
-        // Big icon on mouseover
-        function BigIconByWQI(d) {
-            if (d > 80){
-                return myIcon = L.icon({
-                    iconUrl: 'images/droplet_markers/water_drop_gren.png',
-                    iconSize: [60, 60],
-                    iconAnchor: [35, 35],
-                }); // Excellent
-            } else if (d > 45){
-                return myIcon = L.icon({
-                    iconUrl: 'images/droplet_markers/water_drop_yellow.png',
-                    iconSize: [60, 60],
-                    iconAnchor: [35, 35],
-                }); // Good
-            }  else {
-                return myIcon = L.icon({
-                    iconUrl: 'images/droplet_markers/water_drop_red.png',
-                    iconSize: [60, 60],
-                    iconAnchor: [35, 35],
-                }); // Very Poor
-            }
-
-        }
-
-        // -------------------------------------------------------------------------------------------------------------------------------------
-        // -------------------------------------------------------------------------------------------------------------------------------------
-        // Additional layers
+        // Study area layers ---------------------------------------------------------------------------------------------------------------
 
         let geojsonLayer01; // Paleochannel plain of the Bajo de los Saladillos (PPBS)
         let geojsonLayer02; // Paddy fields 2022
-        let geojsonLayer03;
+        let geojsonLayer03; // I leave this in case of need to add a third layer
 
-        let ppbsBounds = L.layerGroup()// Vegas boundaries & degradación index
-        let paddyFields = L.layerGroup()// Vegas boundaries & degradación index
+        let ppbsBounds = L.layerGroup()// ppbs layer group initialization
+        let paddyFields = L.layerGroup()// paddy fields active in 2022 layer group initialization
 
         // Loading PPBS layer
         fetch("data/Planicie_con_paleocauces_NW-SW_4326.geojson")
@@ -540,10 +475,11 @@
         paddyFields.addTo(map);
 
         // -------------------------------------------------------------------------------------------------------------------------------------
-        // Layers controller
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // PANELS AND CONTROLS CONFIGURATION
 
-        // Overlay layers
-        let overlayBound = {
+        // Layers controller--------------------------------------------------------------------------------------------------------------------
+        let overlayBound = { // Overlay layers
             "<b>PPBS boundaries</b>": ppbsBounds,
             "<b>Active paddy fields (2022)</b>": paddyFields
         };
@@ -572,10 +508,7 @@
             panelDiv.appendChild(customControl.getContainer());
         } 
 
-
-
-        // -------------------------------------------------------------------------------------------------------------------------------------
-                // Info panel settings --> Descripción de la vega
+        // WQI panel---------------------------------------------------------------------------------------------------------------------------
         let wqi_panel = L.control({position: "topright"}); // Referencias control
         wqi_panel.remove()
         //let IBRI_panel = L.control({position: "topright"}); // IBRI logo control
@@ -598,13 +531,8 @@
 
             wqi_panel.addTo(map);
         }
-        //info.addTo(map); // Add the control to the map
-        //IBRI_panel.addTo(map);
-        
-        
-        // Initialize infoDiv
-        // infoDiv('15em') 
-        
+
+        // IBRI panel--------------------------------------------------------------------------------------------------------------------------
         let IBRI_panel = L.control({position: "topright"})
         IBRI_panel.onAdd = function(map) {
             let div = L.DomUtil.create("div", "info"); // change info by ibri_panel or similar
@@ -613,14 +541,7 @@
             div.id = "ibri_panel";
             return div;
         };
-
-        function setIBRIBackground(color) {
-            let panel = document.getElementById("ibri_panel");
-            if (panel) {
-                panel.style.backgroundColor = color;
-            }
-        }
-
+        // Herbicides panel--------------------------------------------------------------------------------------------------------------------
         let Herbcs_panel = L.control({position: "topright"})
         Herbcs_panel.onAdd = function(map) {
             let div = L.DomUtil.create("div", "info"); // change info by ibri_panel or similar
@@ -632,11 +553,10 @@
             return div;
         };
 
-        // Create Leaflet control object for legend
-        let legend = L.control({position: "bottomleft"});
+        // Legend panel--------------------------------------------------------------------------------------------------------------------------
+        let legend = L.control({position: "bottomleft"}); // Create Leaflet control object for legend
 
-        // Function that runs when legend is added to map
-        legend.onAdd = function() {
+        legend.onAdd = function() { // Function that runs when legend is added to map
             let div = L.DomUtil.create("div", "info");        
             div.innerHTML = 
                 '<div class="legend-title">WQI references</div>' +
@@ -648,11 +568,11 @@
             return div;
         };
 
-        // Add Legend to Map
-        legend.addTo(map);
+        legend.addTo(map); // Add Legend to Map
 
         // -------------------------------------------------------------------------------------------------------------------------------------
-        // Features styles and events
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // PANELS AND CONTROLS EVENTS
 
         function label_wqi(wqi) {
             if (wqi > 95){
@@ -700,29 +620,6 @@
             "<b>Observations:</b> " + e.target.feature.properties.Observation + "<br>";
         }
 
-        /*
-        function reset_info_SamPoints(e, gjLayer) {
-            //infoDiv('15em')
-            info.remove()
-            info_p.innerHTML = "";
-            info_h4.innerText = "Referencias";
-        }
-        */
-
-        function set_ibri_background(ibri_value) {
-            if (ibri_value > 19.07){
-                return '#a70000'
-            } else if (ibri_value > 14.72){
-                return '#ff0000'
-            } else if (ibri_value > 10.38){
-                return '#ff5252'
-            } else if (ibri_value > 6.03){
-                return '#ff7b7b'
-            } else {
-                return '#ffbaba'
-            }
-        }
-
         function show_IBRI(e){
             IBRI_panel.addTo(map);
             setIBRIBackground(set_ibri_background(e.target.feature.properties.IBRI));
@@ -731,7 +628,7 @@
             "IBRI: " + e.target.feature.properties.IBRI
         }
 
-        // Test herbicides
+        // Herbicides detected in water panel
         function show_Herbcs(e){
             Herbcs_panel.addTo(map);
             
@@ -834,6 +731,7 @@
                 content += "Metsulfuron-methyl:</b> " + escapedValue + " µg/L<br>"; 
             }
 
+            // No herbicides detected
             if (content === "") {
                 content = "No herbicides detected.";
             }
@@ -862,6 +760,76 @@
         }
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
+        // STYLE SETTINGS FOR MARKERS, PANELS AND LEGEND
+        
+        // Regular icon
+        function iconByWQI(d) {
+            if (d > 80){
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_gren.png',
+                    iconSize: [28, 28],
+                    iconAnchor: [12, 12],
+                }); // Excellent
+            } else if (d > 45){
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_yellow.png',
+                    iconSize: [28, 28],
+                    iconAnchor: [12, 12],
+                }); // Good
+            }  else {
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_red.png',
+                    iconSize: [28, 28],
+                    iconAnchor: [12, 12],
+                }); // Very Poor
+            }
+
+        }
+
+        // Big icon on mouseover
+        function BigIconByWQI(d) {
+            if (d > 80){
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_gren.png',
+                    iconSize: [60, 60],
+                    iconAnchor: [35, 35],
+                }); // Excellent
+            } else if (d > 45){
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_yellow.png',
+                    iconSize: [60, 60],
+                    iconAnchor: [35, 35],
+                }); // Good
+            }  else {
+                return myIcon = L.icon({
+                    iconUrl: 'images/droplet_markers/water_drop_red.png',
+                    iconSize: [60, 60],
+                    iconAnchor: [35, 35],
+                }); // Very Poor
+            }
+        }
+
+        function setIBRIBackground(color) { // Set IBRI panel bckg according to IBRI value
+            let panel = document.getElementById("ibri_panel");
+            if (panel) {
+                panel.style.backgroundColor = color;
+            }
+        }
+
+        function set_ibri_background(ibri_value) {
+            if (ibri_value > 19.07){
+                return '#a70000'
+            } else if (ibri_value > 14.72){
+                return '#ff0000'
+            } else if (ibri_value > 10.38){
+                return '#ff5252'
+            } else if (ibri_value > 6.03){
+                return '#ff7b7b'
+            } else {
+                return '#ffbaba'
+            }
+        }
+
     </script>
 </body>
 </html>
