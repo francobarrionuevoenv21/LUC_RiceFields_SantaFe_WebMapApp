@@ -304,10 +304,9 @@
 
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
-        // Complementary functions for sampling points data processing
+        // COMPLEMENTARY FUNCTIONS FOR SAMPLINSG POINTS DATA PROCESSING DEFINITION
 
-        // Extract unique campaign values from GeoJSON data
-        function extractUniqueCampaigns(geojsonData) {
+        function extractUniqueCampaigns(geojsonData) { // Extract unique campaign values from GeoJSON data
             const campaigns = new Set(); // Set is a JavaScript data structure that automatically keeps only unique values
             
             if (geojsonData.features) {
@@ -326,8 +325,7 @@
             return Array.from(campaigns).sort();
         }
 
-        // Filter GeoJSON data by a specific feature and value
-        function filterByFeature(feature, value) {
+        function filterByFeature(feature, value) { // Filter GeoJSON data by a specific feature and value
             if (!originalLayer) return;
 
             let filteredData01 = originalLayer.features.filter(function(featureItem) {
@@ -341,8 +339,7 @@
             updateLayer(filteredData02);
         }
 
-        // Update data according to the campaign filter and define events when features are hovered
-        function updateLayer(filteredData) {
+        function updateLayer(filteredData) { // Update data according to the campaign filter and define events when features are hovered
             if (geojsonLayer) {
                 map.removeLayer(geojsonLayer);
             }
@@ -353,18 +350,18 @@
                 },
                 onEachFeature: function(feature, layer) {
                     layer.on("mouseover", function(e){ 
-                        info_feature_SamPoints(e);
-                        show_IBRI(e);
-                        show_Herbcs(e);
-                        remove_legend();
-                        layer.setIcon(BigIconByWQI(feature.properties.WQI));
+                        info_feature_SamPoints(e); // Find it below
+                        show_IBRI(e); // Find it below
+                        show_Herbcs(e); // Find it below
+                        remove_legend(); // Find it below
+                        layer.setIcon(BigIconByWQI(feature.properties.WQI)); // Find it below
                     });
                     layer.on("mouseout", function(e) {
-                        remove_wqi();
-                        remove_IBRI();
-                        remove_Herbcs();
-                        show_legend();
-                        layer.setIcon(iconByWQI(feature.properties.WQI) );
+                        remove_wqi(); // Find it below
+                        remove_IBRI(); // Find it below
+                        remove_Herbcs(); // Find it below
+                        show_legend(); // Find it below
+                        layer.setIcon(iconByWQI(feature.properties.WQI) ); // Find it below
                     });
                 }
             }).addTo(map);
@@ -372,7 +369,7 @@
 
         // -------------------------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------
-        // Load and process sampling points GeoJSON data
+        // LOAD AND PROCESS SAMPLING POINTS GEOJSON DATA
 
         // Sampling points layer ---------------------------------------------------------------------------------------------------------------
         let geojsonLayer = null; // Layer for sampling points
