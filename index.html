@@ -454,7 +454,7 @@
         ppbsBounds.addTo(map);
 
         // Loading active paddy fields by 2022 layer
-        fetch("data/paddy_fields_active2022.geojson")
+        fetch("data/paddy_fields_full.geojson")
             .then(function(response) {
                 return response.json();
             })
@@ -478,7 +478,7 @@
         // Layers controller--------------------------------------------------------------------------------------------------------------------
         let overlayBound = { // Overlay layers
             "<b>PPBS boundaries</b>": ppbsBounds,
-            "<b>Active paddy fields (2022)</b>": paddyFields
+            "<b>Rice fields</b>": paddyFields
         };
 
         // Panel for controller
@@ -543,7 +543,7 @@
         Herbcs_panel.onAdd = function(map) {
             let div = L.DomUtil.create("div", "info"); // change info by ibri_panel or similar
             div.innerHTML = `
-                <h4 id="dynamic-title_herbcs"> Herbicides in water </h4>
+                <h4 id="dynamic-title_herbcs"> Agrochemicals in water </h4>
                 <p id="current_feature_herbcs"></p>`;
             div.style.width = '30em'; // Only keep width if it's dynamic
             div.id = "herbcs_panel";
