@@ -8,6 +8,8 @@ This interactive map is complementary to the work presented in [Tropentag 2025](
 
 **App developer:** Franco David Barrionuevo (@francobarrionuevoenv21)
 
+<img width="1918" height="876" alt="image" src="https://github.com/user-attachments/assets/4a31de9d-e8ac-45a8-8100-3d03abc0f6b0" />
+
 
 #### Cite this work:
 
