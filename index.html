@@ -249,7 +249,7 @@
 
                 /* Style for the entire legend container */
                 #legend_panel{
-                    bottom: 60px;
+                    bottom: 30px;
                 }
 
                 #legend_panel .legend-title {
@@ -477,7 +477,7 @@
 
         // Layers controller--------------------------------------------------------------------------------------------------------------------
         let overlayBound = { // Overlay layers
-            "<b>PPBS boundaries</b>": ppbsBounds,
+            "<b>Paleochannel Plain of the Bajo de los Saladillos (PPBS)</b>": ppbsBounds,
             "<b>Rice fields</b>": paddyFields
         };
 
@@ -593,7 +593,7 @@
             wqi_h4 = document.getElementById("dynamic-title_wqi");
             wqi_p_wqi = document.getElementById("wqi_value");
             wqi_p_params = document.getElementById("current_feature_wqi");
-            wqi_p_wqi.innerHTML = "WQI: " + e.target.feature.properties.WQI + " (" + label_wqi(e.target.feature.properties.WQI) + ")"; //+ "<br>" +
+            wqi_p_wqi.innerHTML = "Water Quality Index (WQI): " + e.target.feature.properties.WQI + " (" + label_wqi(e.target.feature.properties.WQI) + ")"; //+ "<br>" +
             wqi_h4.innerText = e.target.feature.properties.Description//"Sampling point & WQI info"
 
             wqi_p_params.innerHTML =
@@ -728,9 +728,9 @@
                 content += "Metsulfuron-methyl:</b> " + escapedValue + " µg/L<br>"; 
             }
 
-            // No herbicides detected
+            // No agrochemicals detected
             if (content === "") {
-                content = "No herbicides detected.";
+                content = "Not detected.";
             }
 
             info_p.innerHTML = content;
