@@ -4,7 +4,7 @@
 ### **[Web Map App Access](https://francobarrionuevoenv21.github.io/LUC_RiceFields_SantaFe_WebMapApp/)** 
 
 
-This interactive map is complementary to the work presented in [Tropentag 2025](https://www.tropentag.de/conference/general.php), held during September 2025 in Bonn, Germany.
+This interactive map is complementary to the work presented in [Tropentag 2025](https://www.tropentag.de/conference/general.php), held during September 2025 in Bonn, Germany. The poster presented at the conference includes a QR code to access this web map app. [Poster available here](https://github.com/francobarrionuevoenv21/LUC_RiceFields_SantaFe_WebMapApp/blob/main/Clauser%20et%20al%202025_Poster_Tropentag.pdf).
 
 **App developer:** Franco David Barrionuevo (@francobarrionuevoenv21)
 
